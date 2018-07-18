@@ -8902,8 +8902,10 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
     mainRoute.$inject = ["$routeProvider", "FacebookProvider", "GoogleSigninProvider"];
     function mainRoute($routeProvider, FacebookProvider, GoogleSigninProvider) {
 
+        // connect with facebook
         FacebookProvider.init('184315939079210');
 
+        // connect with google
         GoogleSigninProvider.init({
             client_id: '607355219083-p7ven3qhii2kijmd1utei3h260ph8dk7.apps.googleusercontent.com',
         });
@@ -8982,6 +8984,34 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 (function () {
     'use strict';
 
+    angular.module('page', [
+        'ngRoute'
+    ]);
+
+})();
+
+(function () {
+
+    'use strict';
+
+    pageRoute.$inject = ["$routeProvider"];
+    function pageRoute($routeProvider) {
+        $routeProvider
+            .when("/page/:id/:pageName/:pageNumber", {
+                templateUrl : "parts/page/page.html",
+                controller: "pageController",
+                controllerAs: '$ctrl'
+            });
+    }
+
+    angular.module('page')
+        .config(pageRoute);
+
+})();
+
+(function () {
+    'use strict';
+
     angular.module('header', []);
 
 })();
@@ -9011,34 +9041,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 
     angular.module('home')
         .config(homeRoute);
-
-})();
-
-(function () {
-    'use strict';
-
-    angular.module('page', [
-        'ngRoute'
-    ]);
-
-})();
-
-(function () {
-
-    'use strict';
-
-    pageRoute.$inject = ["$routeProvider"];
-    function pageRoute($routeProvider) {
-        $routeProvider
-            .when("/page/:id/:pageName/:pageNumber", {
-                templateUrl : "parts/page/page.html",
-                controller: "pageController",
-                controllerAs: '$ctrl'
-            });
-    }
-
-    angular.module('page')
-        .config(pageRoute);
 
 })();
 
@@ -9193,271 +9195,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
     angular
         .module('front')
         .service('frontService', frontService);
-
-})();
-
-
-
-
-(function () {
-    'use strict';
-
-    headerTop.$inject = ["$log", "$uibModal", "$routeParams", "$localStorage", "popupsService", "mainHttpService", "mainAuthorizationService", "headersService"];
-    function headerTop($log, $uibModal, $routeParams, $localStorage, popupsService, mainHttpService, mainAuthorizationService, headersService) {
-        return {
-            restrict: 'EA',
-            templateUrl: window.ORIGIN_PATH + 'parts/header/header.html',
-            link: function (scope, element, attrs) {
-
-                var getProp = function(data, prop) {
-                  return _.find(data, {name: prop});
-                };
-
-              scope.originPath = function () {
-                return window.ORIGIN_PATH;
-              };
-
-                function facebookLogin(ctrlPopup) {
-                  mainAuthorizationService.authFacebook(function (userResponse) {
-                    // check if header is existing
-                    mainHttpService.getByEmail('headers', userResponse.email, function(responseHeaders) {
-                      userResponse.rememberMe = true;
-                      mainHttpService.login('users/login', userResponse, function (responseLogin) {
-                        // close Popup
-                        ctrlPopup.cancel();
-                        if (responseHeaders.length <= 0) {
-                          mainHttpService.add('headers', headersService.defaultHeader(scope.getUser().name, scope.getUser().email), function (header) {
-                            scope.openTopMenu = false;
-                            window.location.hash = 'resume/' + header._id;
-                          });
-                        } else {
-                          scope.openTopMenu = false;
-                          window.location.hash = 'resume/' + responseHeaders[0]._id;
-                        }
-                      });
-                    });
-                  });
-                }
-
-                function googleLogin(ctrlPopup) {
-                  mainAuthorizationService.authGoogle(function (userResponse) {
-                    $log.info('--> userResponse <--\n', userResponse);
-                  });
-                }
-
-                scope.logout = function () {
-                    mainHttpService.logout();
-                };
-
-                scope.getUser = function () {
-                  return mainAuthorizationService.getUser();
-                };
-
-                scope.showTopMenu = function () {
-                    if (!scope.openTopMenu) {
-                        scope.openTopMenu = true;
-                    } else {
-                        scope.openTopMenu = false;
-                    }
-                };
-
-                scope.authorization = function() {
-                  return mainAuthorizationService.checkAuthorization();
-                };
-
-                scope.open = function () {
-
-                    popupsService.forms({
-                        title: 'Log In',
-                        fields: [
-                            {
-                                type: 'email',
-                                placeholder: 'email',
-                                text: '',
-                                name: 'email',
-                                required: true
-                            },
-                            {
-                                type: 'password',
-                                placeholder: 'password',
-                                text: '',
-                                name: 'password',
-                                required: true
-                            },
-                            {
-                                type: 'checkbox',
-                                placeholder: 'Remember me',
-                                name: 'rememberMe',
-                                checked: false
-                            }
-                        ],
-                        additionalButtons: [
-                          {
-                            text: 'Connect with Facebook',
-                            handler: facebookLogin
-                          },
-                          {
-                            text: 'Connect with Google',
-                            handler: googleLogin
-                          }
-                        ]
-                    }, function (data) {
-
-                        var filledData = {
-                          email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text,
-                          rememberMe: getProp(data, 'rememberMe').checked
-                        };
-
-                        mainHttpService.login('users/login', filledData, function (response) {
-                            scope.openTopMenu = false;
-                        });
-
-                    });
-                };
-
-                scope.registration = function () {
-
-                    popupsService.forms({
-                        title: 'Registration',
-                        fields: [
-                            {
-                                type: 'text',
-                                placeholder: 'name',
-                                text: '',
-                                name: 'name',
-                                required: true
-                            },
-                            {
-                                type: 'email',
-                                placeholder: 'email',
-                                text: '',
-                                name: 'email',
-                                required: true
-                            },
-                            {
-                                type: 'password',
-                                placeholder: 'password',
-                                text: '',
-                                name: 'password',
-                                required: true
-                            },
-                            {
-                                type: 'password',
-                                placeholder: 'confirm password',
-                                text: '',
-                                name: 'confirm_password',
-                                required: true
-                            }
-                        ]
-                    }, function (data) {
-
-                        var filledUser = {
-                          name: getProp(data, 'name').text,
-                          email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text
-                        };
-
-                      mainHttpService.authorization('authorization', filledUser, function () {
-                        scope.openTopMenu = false;
-
-                        popupsService.messages('User activation', {
-                          data: { message: 'You need to go to your email service and activate account!'}
-                        });
-                      });
-
-                    });
-                };
-
-
-            }
-        };
-    }
-
-    angular.module('header')
-        .directive('headerTop', headerTop);
-
-})();
-
-
-(function () {
-    'use strict';
-
-    headersService.$inject = ["$http", "$log"];
-    function headersService($http, $log) {
-        var _this = this;
-
-      _this.defaultHeader = function (name, email) {
-          return {
-            name: name,
-            position: 'Position name',
-            age: '<your age>',
-            skills: '<need your real skills (for example: css, html etc.)>',
-            creator_email: email
-          };
-      };
-        
-    }
-
-    angular
-        .module('header')
-        .service('headersService', headersService);
-
-})();
-
-
-(function () {
-    'use strict';
-
-    homeController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "popupsService", "homeService", "mainAuthorizationService", "paginationService"];
-    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, paginationService) {
-        var $ctrl = this;
-
-        // This is necessary for pagination menu because 'hash' can be different
-        $scope.getHash = '#';
-
-      $ctrl.items = [];
-
-        // for the correct "reverse"
-        mainHttpService.cacheData = {};
-
-        mainHttpService.get('headers', function (response) {
-            $ctrl.items = _.reverse(response);
-            $scope.prevItems = $ctrl.items;
-        });
-
-        $ctrl.Authorization = function() {
-            return mainAuthorizationService.checkAuthorization();
-        };
-
-        $ctrl.findMe = function() {
-          $ctrl.items = [_.find(mainHttpService.cacheData.headers, { 'creator_email': $ctrl.getUser().email })];
-          $scope.prevItems = $ctrl.items;
-        };
-
-        $ctrl.getUser = function() {
-          return mainAuthorizationService.getUser();
-        };
-       
-    }
-
-    angular.module('home')
-        .controller('homeController', homeController);
-
-})();
-
-
-(function () {
-    'use strict';
-
-    homeService.$inject = ["$http", "$log", "$routeParams"];
-    function homeService ($http, $log, $routeParams) {
-      var _this = this;
-    }
-
-    angular
-        .module('home')
-        .service('homeService', homeService);
 
 })();
 
@@ -9855,6 +9592,291 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
     angular
         .module('page')
         .service('pageService', pageService);
+
+})();
+
+
+
+
+(function () {
+    'use strict';
+
+    headerTop.$inject = ["$log", "$uibModal", "$routeParams", "$localStorage", "popupsService", "mainHttpService", "mainAuthorizationService", "headersService"];
+    function headerTop($log, $uibModal, $routeParams, $localStorage, popupsService, mainHttpService, mainAuthorizationService, headersService) {
+        return {
+            restrict: 'EA',
+            templateUrl: window.ORIGIN_PATH + 'parts/header/header.html',
+            link: function (scope, element, attrs) {
+
+                var getProp = function(data, prop) {
+                  return _.find(data, {name: prop});
+                };
+
+              scope.originPath = function () {
+                return window.ORIGIN_PATH;
+              };
+
+                function facebookLogin(ctrlPopup) {
+                  mainAuthorizationService.authFacebook(function (userResponse) {
+                    // check if header is existing
+                    mainHttpService.getByEmail('headers', userResponse.email, function(responseHeaders) {
+                      userResponse.rememberMe = true;
+                      mainHttpService.login('users/login', userResponse, function (responseLogin) {
+                        // close Popup
+                        ctrlPopup.cancel();
+                        if (responseHeaders.length <= 0) {
+                          mainHttpService.add('headers', headersService.defaultHeader(scope.getUser().name, scope.getUser().email), function (header) {
+                            scope.openTopMenu = false;
+                            window.location.hash = 'resume/' + header._id;
+                          });
+                        } else {
+                          scope.openTopMenu = false;
+                          window.location.hash = 'resume/' + responseHeaders[0]._id;
+                        }
+                      });
+                    });
+                  });
+                }
+
+                function googleLogin(ctrlPopup) {
+                  mainAuthorizationService.authGoogle(function (userResponse) {
+                    var userResponse = {
+                      name: userResponse.w3.ig,
+                      email: userResponse.w3.U3
+                    };
+                    // check if header is existing
+                    mainHttpService.getByEmail('headers', userResponse.email, function(responseHeaders) {
+                      userResponse.rememberMe = true;
+                      mainHttpService.login('users/login', userResponse, function (responseLogin) {
+                        // close Popup
+                        ctrlPopup.cancel();
+                        if (responseHeaders.length <= 0) {
+                          mainHttpService.add('headers', headersService.defaultHeader(scope.getUser().name, scope.getUser().email), function (header) {
+                            scope.openTopMenu = false;
+                            window.location.hash = 'resume/' + header._id;
+                          });
+                        } else {
+                          scope.openTopMenu = false;
+                          window.location.hash = 'resume/' + responseHeaders[0]._id;
+                        }
+                      });
+                    });
+                  });
+                }
+
+                scope.logout = function () {
+                    mainHttpService.logout();
+                };
+
+                scope.getUser = function () {
+                  return mainAuthorizationService.getUser();
+                };
+
+                scope.showTopMenu = function () {
+                    if (!scope.openTopMenu) {
+                        scope.openTopMenu = true;
+                    } else {
+                        scope.openTopMenu = false;
+                    }
+                };
+
+                scope.authorization = function() {
+                  return mainAuthorizationService.checkAuthorization();
+                };
+
+                scope.open = function () {
+
+                    popupsService.forms({
+                        title: 'Log In',
+                        fields: [
+                            {
+                                type: 'email',
+                                placeholder: 'email',
+                                text: '',
+                                name: 'email',
+                                required: true
+                            },
+                            {
+                                type: 'password',
+                                placeholder: 'password',
+                                text: '',
+                                name: 'password',
+                                required: true
+                            },
+                            {
+                                type: 'checkbox',
+                                placeholder: 'Remember me',
+                                name: 'rememberMe',
+                                checked: false
+                            }
+                        ],
+                        additionalButtons: [
+                          {
+                            text: 'Connect with Facebook',
+                            handler: facebookLogin
+                          },
+                          {
+                            text: 'Connect with Google',
+                            handler: googleLogin
+                          }
+                        ]
+                    }, function (data) {
+
+                        var filledData = {
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text,
+                          rememberMe: getProp(data, 'rememberMe').checked
+                        };
+
+                        mainHttpService.login('users/login', filledData, function (response) {
+                            scope.openTopMenu = false;
+                        });
+
+                    });
+                };
+
+                scope.registration = function () {
+
+                    popupsService.forms({
+                        title: 'Registration',
+                        fields: [
+                            {
+                                type: 'text',
+                                placeholder: 'name',
+                                text: '',
+                                name: 'name',
+                                required: true
+                            },
+                            {
+                                type: 'email',
+                                placeholder: 'email',
+                                text: '',
+                                name: 'email',
+                                required: true
+                            },
+                            {
+                                type: 'password',
+                                placeholder: 'password',
+                                text: '',
+                                name: 'password',
+                                required: true
+                            },
+                            {
+                                type: 'password',
+                                placeholder: 'confirm password',
+                                text: '',
+                                name: 'confirm_password',
+                                required: true
+                            }
+                        ]
+                    }, function (data) {
+
+                        var filledUser = {
+                          name: getProp(data, 'name').text,
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text
+                        };
+
+                      mainHttpService.authorization('authorization', filledUser, function () {
+                        scope.openTopMenu = false;
+
+                        popupsService.messages('User activation', {
+                          data: { message: 'You need to go to your email service and activate account!'}
+                        });
+                      });
+
+                    });
+                };
+
+
+            }
+        };
+    }
+
+    angular.module('header')
+        .directive('headerTop', headerTop);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    headersService.$inject = ["$http", "$log"];
+    function headersService($http, $log) {
+        var _this = this;
+
+      _this.defaultHeader = function (name, email) {
+          return {
+            name: name,
+            position: 'Position name',
+            age: '<your age>',
+            skills: '<need your real skills (for example: css, html etc.)>',
+            creator_email: email
+          };
+      };
+        
+    }
+
+    angular
+        .module('header')
+        .service('headersService', headersService);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    homeController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "popupsService", "homeService", "mainAuthorizationService", "paginationService"];
+    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, paginationService) {
+        var $ctrl = this;
+
+        // This is necessary for pagination menu because 'hash' can be different
+        $scope.getHash = '#';
+
+      $ctrl.items = [];
+
+        // for the correct "reverse"
+        mainHttpService.cacheData = {};
+
+        mainHttpService.get('headers', function (response) {
+            $ctrl.items = _.reverse(response);
+            $scope.prevItems = $ctrl.items;
+        });
+
+        $ctrl.Authorization = function() {
+            return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.findMe = function() {
+          $ctrl.items = [_.find(mainHttpService.cacheData.headers, { 'creator_email': $ctrl.getUser().email })];
+          $scope.prevItems = $ctrl.items;
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+       
+    }
+
+    angular.module('home')
+        .controller('homeController', homeController);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    homeService.$inject = ["$http", "$log", "$routeParams"];
+    function homeService ($http, $log, $routeParams) {
+      var _this = this;
+    }
+
+    angular
+        .module('home')
+        .service('homeService', homeService);
 
 })();
 
