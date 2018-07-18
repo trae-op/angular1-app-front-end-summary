@@ -55,6 +55,64 @@
 
 })();
 
+
+(function () {
+  'use strict';
+
+  angular.module('activation', [
+    'ngRoute'
+  ]);
+
+})();
+
+
+(function () {
+
+  'use strict';
+
+  activationUserRouter.$inject = ["$routeProvider"];
+  function activationUserRouter($routeProvider) {
+    $routeProvider
+      .when("/activation/:hash", {
+        templateUrl : "parts/activation-user/activation.user.html",
+        controller: "activationUserController",
+        controllerAs: '$ctrl'
+      });
+  }
+
+  angular.module('activation')
+    .config(activationUserRouter);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('front', [
+        'ngRoute'
+    ]);
+
+})();
+
+(function () {
+
+    'use strict';
+
+    frontRoute.$inject = ["$routeProvider"];
+    function frontRoute($routeProvider) {
+        $routeProvider
+            .when("/resume/:id", {
+                templateUrl : "parts/front/front.html",
+                controller: "frontController",
+                controllerAs: '$ctrl'
+            });
+    }
+
+    angular.module('front')
+        .config(frontRoute);
+
+})();
+
 (function () {
     'use strict';
 
@@ -93,81 +151,6 @@
 (function () {
     'use strict';
 
-    angular.module('front', [
-        'ngRoute'
-    ]);
-
-})();
-
-(function () {
-
-    'use strict';
-
-    frontRoute.$inject = ["$routeProvider"];
-    function frontRoute($routeProvider) {
-        $routeProvider
-            .when("/resume/:id", {
-                templateUrl : "parts/front/front.html",
-                controller: "frontController",
-                controllerAs: '$ctrl'
-            });
-    }
-
-    angular.module('front')
-        .config(frontRoute);
-
-})();
-
-(function () {
-    'use strict';
-
-    angular.module('shared', [
-        'ngRoute',
-        'ui.bootstrap'
-    ]);
-
-})();
-
-(function () {
-    'use strict';
-
-    angular.module('users', []);
-
-})();
-
-
-(function () {
-  'use strict';
-
-  angular.module('activation', [
-    'ngRoute'
-  ]);
-
-})();
-
-
-(function () {
-
-  'use strict';
-
-  activationUserRouter.$inject = ["$routeProvider"];
-  function activationUserRouter($routeProvider) {
-    $routeProvider
-      .when("/activation/:hash", {
-        templateUrl : "parts/activation-user/activation.user.html",
-        controller: "activationUserController",
-        controllerAs: '$ctrl'
-      });
-  }
-
-  angular.module('activation')
-    .config(activationUserRouter);
-
-})();
-
-(function () {
-    'use strict';
-
     angular.module('page', [
         'ngRoute'
     ]);
@@ -193,6 +176,159 @@
 
 })();
 
+(function () {
+    'use strict';
+
+    angular.module('shared', [
+        'ngRoute',
+        'ui.bootstrap'
+    ]);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('users', []);
+
+})();
+
+
+
+(function () {
+  'use strict';
+
+  activationUserController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "$localStorage", "mainAuthorizationService", "headersService"];
+  function activationUserController($scope, $log, $routeParams, mainHttpService, $localStorage, mainAuthorizationService, headersService) {
+    var $ctrl = this;
+
+    $ctrl.routeParams = $routeParams;
+
+    if ($localStorage.temporaryDataUser) {
+      var filledUser = {
+        name: $localStorage.temporaryDataUser.name,
+        email: $localStorage.temporaryDataUser.email,
+        password: $localStorage.temporaryDataUser.password,
+        uuid: $localStorage.temporaryDataUser.uuid,
+        hash: $ctrl.routeParams.hash
+      };
+
+      var filledLogin = {
+        email: $localStorage.temporaryDataUser.email,
+        password: $localStorage.temporaryDataUser.password,
+        rememberMe: true
+      };
+      mainHttpService.accountActivationUser('activation', filledUser, function (response) {
+        $localStorage.temporaryDataUser = false;
+        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+          mainHttpService.add('headers', headersService.defaultHeader(getUser().name, getUser().email), function (responseHeaders) {
+            $log.info('$localStorage', $localStorage);
+            $ctrl.message = 'Your account successfully activated!!!';
+          });
+        });
+      });
+    }
+
+    function getUser() {
+      return mainAuthorizationService.getUser();
+    }
+
+  }
+
+  angular.module('activation')
+    .controller('activationUserController', activationUserController);
+
+})();
+
+
+
+(function () {
+    'use strict';
+
+    frontController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "frontService", "popupsService", "mainAuthorizationService"];
+    function frontController($scope, $routeParams, $log, mainHttpService, frontService, popupsService, mainAuthorizationService) {
+        var $ctrl = this;
+
+        $ctrl.routeParams = $routeParams;
+
+        mainHttpService.getById('headers', $ctrl.routeParams.id, function (response) {
+            $ctrl.header = response[0];
+        });
+
+        $ctrl.Authorization = function() {
+          return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+
+
+
+        $ctrl.update = function() {
+          popupsService.forms({
+              title: 'Update',
+              fields: [
+                {
+                    type: 'text',
+                    placeholder: 'position',
+                    name: 'position',
+                    text: $ctrl.header.position,
+                    required: true
+                },
+                {
+                    type: 'text',
+                    placeholder: 'age',
+                    name: 'age',
+                    text: $ctrl.header.age,
+                    required: true
+                }
+              ]
+          }, function (data) {
+            var newData = frontService.filledData(data);
+            newData.name = $ctrl.getUser().name;
+            newData._id = $ctrl.header._id;
+            newData.creator_email = $ctrl.header.creator_email;
+            newData.skills = $ctrl.header.skills;
+            mainHttpService.update('headers', newData, function(response) {
+              $ctrl.header = response;
+            });
+          });
+        };
+
+    }
+
+    angular.module('front')
+        .controller('frontController', frontController);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    frontService.$inject = ["$log"];
+    function frontService($log) {
+      var _this = this;
+      
+      _this.filledData = function (data) {
+        var getProp = function(prop) {
+          return _.find(data, {name: prop});
+        };
+
+        return {
+          position: getProp('position').text,
+          age: getProp('age').text
+        };
+      };
+
+    }
+
+    angular
+        .module('front')
+        .service('frontService', frontService);
+
+})();
 
 
 
@@ -459,15 +595,26 @@
 (function () {
     'use strict';
 
-    frontController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "frontService", "popupsService", "mainAuthorizationService"];
-    function frontController($scope, $routeParams, $log, mainHttpService, frontService, popupsService, mainAuthorizationService) {
+    pageController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "popupsService", "pageService", "paginationService", "mainAuthorizationService"];
+    function pageController($scope, $routeParams, $log, mainHttpService, popupsService, pageService, paginationService, mainAuthorizationService) {
         var $ctrl = this;
 
         $ctrl.routeParams = $routeParams;
 
-        mainHttpService.getById('headers', $ctrl.routeParams.id, function (response) {
-            $ctrl.header = response[0];
+        // This need for pagination menu becowse 'hash' can be diffarent
+        $scope.getHash = '#/page/' + $ctrl.routeParams.id + '/' + $ctrl.routeParams.pageName;
+
+        mainHttpService.getById('headers', $ctrl.routeParams.id, function(responseHeader) {
+          pageService.creatorEmail = responseHeader[0].creator_email;
+          mainHttpService.getByEmail($ctrl.routeParams.pageName, responseHeader[0].creator_email, function(responsePage) {
+              $ctrl.items = _.reverse(responsePage);
+              $scope.prevItems = $ctrl.items;
+          });
         });
+
+        $ctrl.getCreatorEmailByHeader = function() {
+          return pageService.creatorEmail;
+        };
 
         $ctrl.Authorization = function() {
           return mainAuthorizationService.checkAuthorization();
@@ -477,70 +624,367 @@
           return mainAuthorizationService.getUser();
         };
 
+        $ctrl.add = function() {
+          if (!$ctrl.items) {
+            $ctrl.items = [];
+          }
 
+          popupsService.forms({
+              title: $ctrl.routeParams.pageName !== 'abouts' ? 'Add' : 'Create',
+              fields: pageService.getFields()
+          }, function (data) {
+              mainHttpService.add($ctrl.routeParams.pageName, pageService.filledData(data), function(response) {
+                  $ctrl.items.unshift(response);
+                  $scope.prevItems.unshift(response);
+              });
+          });
+        };
 
-        $ctrl.update = function() {
+        $ctrl.update = function(currentData, index) {
           popupsService.forms({
               title: 'Update',
-              fields: [
-                {
-                    type: 'text',
-                    placeholder: 'position',
-                    name: 'position',
-                    text: $ctrl.header.position,
-                    required: true
-                },
-                {
-                    type: 'text',
-                    placeholder: 'age',
-                    name: 'age',
-                    text: $ctrl.header.age,
-                    required: true
-                }
-              ]
+              fields: pageService.getFields(currentData)
           }, function (data) {
-            var newData = frontService.filledData(data);
-            newData.name = $ctrl.getUser().name;
-            newData._id = $ctrl.header._id;
-            newData.creator_email = $ctrl.header.creator_email;
-            newData.skills = $ctrl.header.skills;
-            mainHttpService.update('headers', newData, function(response) {
-              $ctrl.header = response;
+            var newData = pageService.filledData(data);
+            newData._id = currentData._id;
+            mainHttpService.update($ctrl.routeParams.pageName, newData, function(response) {
+                $ctrl.items[index] = response;
             });
           });
         };
 
+        $ctrl.delete = function(id, index) {
+          mainHttpService.deleteById($ctrl.routeParams.pageName, id, function(response) {
+              $ctrl.items.splice(index, 1);
+              $scope.prevItems.splice(index, 1);
+          });
+        };
+
+        $ctrl.changeTitle = function () {
+          return {
+            allSymbols: function() {
+              return _.capitalize($ctrl.routeParams.pageName);
+            },
+            cutLastSymbol: function() {
+              return this.allSymbols().substr(0, this.allSymbols().length - 1);
+            }
+          };
+        };
+
+        $ctrl.loadScript = function (item) {
+          pageService.loadScript({
+            title: 'Load Script',
+            data: item
+          });
+        };
+        
+
     }
 
-    angular.module('front')
-        .controller('frontController', frontController);
+    angular.module('page')
+        .controller('pageController', pageController);
 
 })();
 
 
+
+(function() {
+  
+  'use strict';
+
+  angular.module('page').directive('bindHtmlWithJs', ['$sce', '$parse', function ($sce, $parse)
+    {
+
+        /**
+         * It removes script tags from html and inserts it into DOM.
+         *
+         * Testing:
+         * html += '<script>alert(1234)</script><script type="text/javascript">alert(12345)</script><script type="asdf">alert(1234)</script><script src="/js/alert.js">alert(1234)</script><span style="color: red;">1234</span>';
+         * or
+         * html += '<script src="/js/alert.js"></script><script type="text/javascript">console.log(window.qwerqwerqewr1234)</script><span style="color: red;">1234</span>';
+         *
+         * @param html {String}
+         * @returns {String}
+         */
+        function handleScripts(html)
+        {
+          // html must start with tag - it's angularjs' jqLite bug/feature
+          html = '<i></i>' + html;
+
+          var originElements = angular.element(html),
+            elements = angular.element('<div></div>');
+
+          if (originElements.length)
+          {
+            // start from 1 for removing first tag we just added
+            for (var i = 1, l = originElements.length; i < l; i ++)
+            {
+              var $el = originElements.eq(i),
+                el = $el[0];
+              if (el.nodeName == 'SCRIPT' && ((! el.type) || el.type == 'text/javascript')) {
+                evalScript($el[0]);
+              }
+              else {
+                elements.append($el);
+              }
+            }
+          }
+  //        elements = elements.contents();
+          html = elements.html();
+
+          return html;
+        }
+
+        /**
+         * It's taken from AngularJS' jsonpReq function.
+         * It's not ie < 9 compatible.
+         * @param {DOMElement} element
+         */
+        function evalScript(element)
+        {
+          var script = document.createElement('script'),
+            body = document.body,
+            doneWrapper = function() {
+              script.onload = script.onerror = null;
+              body.removeChild(script);
+            };
+
+          script.type = 'text/javascript';
+          if (element.src)
+          {
+            script.src = element.src;
+            script.async = element.async;
+            script.onload = script.onerror = function () {
+              doneWrapper();
+            };
+          }
+          else
+          {
+            // doesn't work on ie...
+            try {
+              script.appendChild(document.createTextNode(element.innerText));
+            }
+            // IE has funky script nodes
+            catch (e) {
+              script.text = element.innerText;
+            }
+
+            setTimeout(function () {doneWrapper();}, 10);
+          }
+          body.appendChild(script);
+        }
+
+      return function ($scope, element, attr)
+      {
+        element.addClass('ng-binding').data('$binding', attr.bindHtmlWithJs);
+
+        var parsed = $parse(attr.bindHtmlWithJs);
+
+        function getStringValue()
+        {
+          return (parsed($scope) || '').toString();
+        }
+
+        $scope.$watch(getStringValue, function bindHtmlWithJsWatchAction(value)
+        {
+          var html = value ? $sce.getTrustedHtml(parsed($scope)) : '';
+          if (html) {
+            html = handleScripts(html);
+          }
+          element.html(html || '');
+        });
+      };
+    }]);
+
+})();
+
+
+(function() {
+  
+  'use strict';
+
+  angular.module('page')
+    .filter('htmlCode', ["$sce", function($sce) {
+      return function(text) {
+        return $sce.trustAsHtml(text);
+      };
+  }]);
+  
+})();
+
 (function () {
     'use strict';
 
-    frontService.$inject = ["$log"];
-    function frontService($log) {
-      var _this = this;
-      
-      _this.filledData = function (data) {
-        var getProp = function(prop) {
-          return _.find(data, {name: prop});
+    pageService.$inject = ["$http", "$log", "$routeParams", "$uibModal"];
+    function pageService ($http, $log, $routeParams, $uibModal) {
+        var _this = this;
+
+        _this.creatorEmail = '';
+
+        _this.filledData = function (data) {
+
+          var getProp = function(prop) {
+            return _.find(data, {placeholder: prop});
+          };
+
+          var projectsAndCompanies = function () {
+            return {
+              title: getProp('title').text,
+              link: getProp('link').text,
+              image: getProp('image').text,
+              description: getProp('description').text,
+              creator_email: _this.creatorEmail
+            };
+          };
+          switch($routeParams.pageName) {
+            case 'abouts':
+              return {
+                description: getProp('description').text,
+                creator_email: _this.creatorEmail
+              };
+            case 'scripts':
+              return {
+                title: getProp('title').text,
+                link: getProp('link').text,
+                image: getProp('image').text,
+                description: getProp('description').text,
+                css: getProp('css').text,
+                html: getProp('html').text,
+                creator_email: _this.creatorEmail
+              };
+            case 'projects':
+              return projectsAndCompanies();
+            case 'companies':
+              return projectsAndCompanies();
+            default: 
+              return {};
+
+          }
         };
 
-        return {
-          position: getProp('position').text,
-          age: getProp('age').text
+        _this.getFields = function (currentData) {
+          var checkData = function(prop) {
+            return currentData ? currentData[prop] : '';
+          };
+          var projectsAndCompanies = [
+            {
+                type: 'text',
+                placeholder: 'title',
+                text: checkData('title'),
+                required: true
+            },
+            {
+                type: 'text',
+                placeholder: 'link',
+                text: checkData('link'),
+                required: true
+            },
+            {
+                type: 'text',
+                placeholder: 'image',
+                text: checkData('image'),
+                required: true
+            },
+            {
+                type: 'textarea',
+                placeholder: 'description',
+                text: checkData('description'),
+                required: true
+            }
+          ];
+          switch($routeParams.pageName) {
+            case 'scripts':
+              return [
+                  {
+                      type: 'text',
+                      placeholder: 'title',
+                      text: checkData('title'),
+                      required: true
+                  },
+                  {
+                      type: 'text',
+                      placeholder: 'image',
+                      text: checkData('image'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'description',
+                      text: checkData('description'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'css',
+                      text: checkData('css'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'link',
+                      text: checkData('link'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'html',
+                      text: checkData('html'),
+                      required: true
+                  }
+              ];
+            case 'abouts':
+              return [
+                {
+                    type: 'textarea',
+                    placeholder: 'description',
+                    text: checkData('description'),
+                    required: true
+                }
+              ];
+            case 'projects':
+              return projectsAndCompanies;
+            case 'companies':
+              return projectsAndCompanies;
+            default:
+              return [];
+          }
         };
-      };
+
+
+        _this.loadScript = function (data) {
+          var modal = $uibModal.open({
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'parts/load-script/load.script.html',
+            controller: ["$uibModalInstance", "items", function($uibModalInstance, items) {
+                var $ctrl = this;
+                $ctrl.title = items.title;
+                $ctrl.script = {
+                  css: items.data.css,
+                  html: items.data.html,
+                  js: items.data.link
+                };
+
+                $ctrl.close = function () {
+                    $uibModalInstance.dismiss('close');
+                };
+            }],
+            controllerAs: '$ctrl',
+            size: 'md',
+            resolve: {
+                items: function () {
+                    return data;
+                }
+            }
+          });
+        };
+
 
     }
 
     angular
-        .module('front')
-        .service('frontService', frontService);
+        .module('page')
+        .service('pageService', pageService);
 
 })();
 
@@ -957,449 +1401,5 @@
     angular
         .module('users')
         .service('usersService', usersService);
-
-})();
-
-
-(function () {
-  'use strict';
-
-  activationUserController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "$localStorage", "mainAuthorizationService", "headersService"];
-  function activationUserController($scope, $log, $routeParams, mainHttpService, $localStorage, mainAuthorizationService, headersService) {
-    var $ctrl = this;
-
-    $ctrl.routeParams = $routeParams;
-
-    if ($localStorage.temporaryDataUser) {
-      var filledUser = {
-        name: $localStorage.temporaryDataUser.name,
-        email: $localStorage.temporaryDataUser.email,
-        password: $localStorage.temporaryDataUser.password,
-        uuid: $localStorage.temporaryDataUser.uuid,
-        hash: $ctrl.routeParams.hash
-      };
-
-      var filledLogin = {
-        email: $localStorage.temporaryDataUser.email,
-        password: $localStorage.temporaryDataUser.password,
-        rememberMe: true
-      };
-      mainHttpService.accountActivationUser('activation', filledUser, function (response) {
-        $localStorage.temporaryDataUser = false;
-        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
-          mainHttpService.add('headers', headersService.defaultHeader(getUser().name, getUser().email), function (responseHeaders) {
-            $log.info('$localStorage', $localStorage);
-            $ctrl.message = 'Your account successfully activated!!!';
-          });
-        });
-      });
-    }
-
-    function getUser() {
-      return mainAuthorizationService.getUser();
-    }
-
-  }
-
-  angular.module('activation')
-    .controller('activationUserController', activationUserController);
-
-})();
-
-
-
-(function() {
-  
-  'use strict';
-
-  angular.module('page').directive('bindHtmlWithJs', ['$sce', '$parse', function ($sce, $parse)
-    {
-
-        /**
-         * It removes script tags from html and inserts it into DOM.
-         *
-         * Testing:
-         * html += '<script>alert(1234)</script><script type="text/javascript">alert(12345)</script><script type="asdf">alert(1234)</script><script src="/js/alert.js">alert(1234)</script><span style="color: red;">1234</span>';
-         * or
-         * html += '<script src="/js/alert.js"></script><script type="text/javascript">console.log(window.qwerqwerqewr1234)</script><span style="color: red;">1234</span>';
-         *
-         * @param html {String}
-         * @returns {String}
-         */
-        function handleScripts(html)
-        {
-          // html must start with tag - it's angularjs' jqLite bug/feature
-          html = '<i></i>' + html;
-
-          var originElements = angular.element(html),
-            elements = angular.element('<div></div>');
-
-          if (originElements.length)
-          {
-            // start from 1 for removing first tag we just added
-            for (var i = 1, l = originElements.length; i < l; i ++)
-            {
-              var $el = originElements.eq(i),
-                el = $el[0];
-              if (el.nodeName == 'SCRIPT' && ((! el.type) || el.type == 'text/javascript')) {
-                evalScript($el[0]);
-              }
-              else {
-                elements.append($el);
-              }
-            }
-          }
-  //        elements = elements.contents();
-          html = elements.html();
-
-          return html;
-        }
-
-        /**
-         * It's taken from AngularJS' jsonpReq function.
-         * It's not ie < 9 compatible.
-         * @param {DOMElement} element
-         */
-        function evalScript(element)
-        {
-          var script = document.createElement('script'),
-            body = document.body,
-            doneWrapper = function() {
-              script.onload = script.onerror = null;
-              body.removeChild(script);
-            };
-
-          script.type = 'text/javascript';
-          if (element.src)
-          {
-            script.src = element.src;
-            script.async = element.async;
-            script.onload = script.onerror = function () {
-              doneWrapper();
-            };
-          }
-          else
-          {
-            // doesn't work on ie...
-            try {
-              script.appendChild(document.createTextNode(element.innerText));
-            }
-            // IE has funky script nodes
-            catch (e) {
-              script.text = element.innerText;
-            }
-
-            setTimeout(function () {doneWrapper();}, 10);
-          }
-          body.appendChild(script);
-        }
-
-      return function ($scope, element, attr)
-      {
-        element.addClass('ng-binding').data('$binding', attr.bindHtmlWithJs);
-
-        var parsed = $parse(attr.bindHtmlWithJs);
-
-        function getStringValue()
-        {
-          return (parsed($scope) || '').toString();
-        }
-
-        $scope.$watch(getStringValue, function bindHtmlWithJsWatchAction(value)
-        {
-          var html = value ? $sce.getTrustedHtml(parsed($scope)) : '';
-          if (html) {
-            html = handleScripts(html);
-          }
-          element.html(html || '');
-        });
-      };
-    }]);
-
-})();
-
-
-
-
-(function () {
-    'use strict';
-
-    pageController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "popupsService", "pageService", "paginationService", "mainAuthorizationService"];
-    function pageController($scope, $routeParams, $log, mainHttpService, popupsService, pageService, paginationService, mainAuthorizationService) {
-        var $ctrl = this;
-
-        $ctrl.routeParams = $routeParams;
-
-        // This need for pagination menu becowse 'hash' can be diffarent
-        $scope.getHash = '#/page/' + $ctrl.routeParams.id + '/' + $ctrl.routeParams.pageName;
-
-        mainHttpService.getById('headers', $ctrl.routeParams.id, function(responseHeader) {
-          pageService.creatorEmail = responseHeader[0].creator_email;
-          mainHttpService.getByEmail($ctrl.routeParams.pageName, responseHeader[0].creator_email, function(responsePage) {
-              $ctrl.items = _.reverse(responsePage);
-              $scope.prevItems = $ctrl.items;
-          });
-        });
-
-        $ctrl.getCreatorEmailByHeader = function() {
-          return pageService.creatorEmail;
-        };
-
-        $ctrl.Authorization = function() {
-          return mainAuthorizationService.checkAuthorization();
-        };
-
-        $ctrl.getUser = function() {
-          return mainAuthorizationService.getUser();
-        };
-
-        $ctrl.add = function() {
-          if (!$ctrl.items) {
-            $ctrl.items = [];
-          }
-
-          popupsService.forms({
-              title: $ctrl.routeParams.pageName !== 'abouts' ? 'Add' : 'Create',
-              fields: pageService.getFields()
-          }, function (data) {
-              mainHttpService.add($ctrl.routeParams.pageName, pageService.filledData(data), function(response) {
-                  $ctrl.items.unshift(response);
-                  $scope.prevItems.unshift(response);
-              });
-          });
-        };
-
-        $ctrl.update = function(currentData, index) {
-          popupsService.forms({
-              title: 'Update',
-              fields: pageService.getFields(currentData)
-          }, function (data) {
-            var newData = pageService.filledData(data);
-            newData._id = currentData._id;
-            mainHttpService.update($ctrl.routeParams.pageName, newData, function(response) {
-                $ctrl.items[index] = response;
-            });
-          });
-        };
-
-        $ctrl.delete = function(id, index) {
-          mainHttpService.deleteById($ctrl.routeParams.pageName, id, function(response) {
-              $ctrl.items.splice(index, 1);
-              $scope.prevItems.splice(index, 1);
-          });
-        };
-
-        $ctrl.changeTitle = function () {
-          return {
-            allSymbols: function() {
-              return _.capitalize($ctrl.routeParams.pageName);
-            },
-            cutLastSymbol: function() {
-              return this.allSymbols().substr(0, this.allSymbols().length - 1);
-            }
-          };
-        };
-
-        $ctrl.loadScript = function (item) {
-          pageService.loadScript({
-            title: 'Load Script',
-            data: item
-          });
-        };
-        
-
-    }
-
-    angular.module('page')
-        .controller('pageController', pageController);
-
-})();
-
-(function() {
-  
-  'use strict';
-
-  angular.module('page')
-    .filter('htmlCode', ["$sce", function($sce) {
-      return function(text) {
-        return $sce.trustAsHtml(text);
-      };
-  }]);
-  
-})();
-
-(function () {
-    'use strict';
-
-    pageService.$inject = ["$http", "$log", "$routeParams", "$uibModal"];
-    function pageService ($http, $log, $routeParams, $uibModal) {
-        var _this = this;
-
-        _this.creatorEmail = '';
-
-        _this.filledData = function (data) {
-
-          var getProp = function(prop) {
-            return _.find(data, {placeholder: prop});
-          };
-
-          var projectsAndCompanies = function () {
-            return {
-              title: getProp('title').text,
-              link: getProp('link').text,
-              image: getProp('image').text,
-              description: getProp('description').text,
-              creator_email: _this.creatorEmail
-            };
-          };
-          switch($routeParams.pageName) {
-            case 'abouts':
-              return {
-                description: getProp('description').text,
-                creator_email: _this.creatorEmail
-              };
-            case 'scripts':
-              return {
-                title: getProp('title').text,
-                link: getProp('link').text,
-                image: getProp('image').text,
-                description: getProp('description').text,
-                css: getProp('css').text,
-                html: getProp('html').text,
-                creator_email: _this.creatorEmail
-              };
-            case 'projects':
-              return projectsAndCompanies();
-            case 'companies':
-              return projectsAndCompanies();
-            default: 
-              return {};
-
-          }
-        };
-
-        _this.getFields = function (currentData) {
-          var checkData = function(prop) {
-            return currentData ? currentData[prop] : '';
-          };
-          var projectsAndCompanies = [
-            {
-                type: 'text',
-                placeholder: 'title',
-                text: checkData('title'),
-                required: true
-            },
-            {
-                type: 'text',
-                placeholder: 'link',
-                text: checkData('link'),
-                required: true
-            },
-            {
-                type: 'text',
-                placeholder: 'image',
-                text: checkData('image'),
-                required: true
-            },
-            {
-                type: 'textarea',
-                placeholder: 'description',
-                text: checkData('description'),
-                required: true
-            }
-          ];
-          switch($routeParams.pageName) {
-            case 'scripts':
-              return [
-                  {
-                      type: 'text',
-                      placeholder: 'title',
-                      text: checkData('title'),
-                      required: true
-                  },
-                  {
-                      type: 'text',
-                      placeholder: 'image',
-                      text: checkData('image'),
-                      required: true
-                  },
-                  {
-                      type: 'textarea',
-                      placeholder: 'description',
-                      text: checkData('description'),
-                      required: true
-                  },
-                  {
-                      type: 'textarea',
-                      placeholder: 'css',
-                      text: checkData('css'),
-                      required: true
-                  },
-                  {
-                      type: 'textarea',
-                      placeholder: 'link',
-                      text: checkData('link'),
-                      required: true
-                  },
-                  {
-                      type: 'textarea',
-                      placeholder: 'html',
-                      text: checkData('html'),
-                      required: true
-                  }
-              ];
-            case 'abouts':
-              return [
-                {
-                    type: 'textarea',
-                    placeholder: 'description',
-                    text: checkData('description'),
-                    required: true
-                }
-              ];
-            case 'projects':
-              return projectsAndCompanies;
-            case 'companies':
-              return projectsAndCompanies;
-            default:
-              return [];
-          }
-        };
-
-
-        _this.loadScript = function (data) {
-          var modal = $uibModal.open({
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: 'parts/load-script/load.script.html',
-            controller: ["$uibModalInstance", "items", function($uibModalInstance, items) {
-                var $ctrl = this;
-                $ctrl.title = items.title;
-                $ctrl.script = {
-                  css: items.data.css,
-                  html: items.data.html,
-                  js: items.data.link
-                };
-
-                $ctrl.close = function () {
-                    $uibModalInstance.dismiss('close');
-                };
-            }],
-            controllerAs: '$ctrl',
-            size: 'md',
-            resolve: {
-                items: function () {
-                    return data;
-                }
-            }
-          });
-        };
-
-
-    }
-
-    angular
-        .module('page')
-        .service('pageService', pageService);
 
 })();
