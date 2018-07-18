@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title" data-ng-bind="$ctrl.title"></h3>
+</div>
+<div class="modal-body" id="modal-body">
+
+  <style ng-bind-html="$ctrl.script.css"></style>
+  <div ng-bind-html="$ctrl.script.html"></div>
+  <div bind-html-with-js="$ctrl.script.js | htmlCode"></div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" type="button" ng-click="$ctrl.close()">Close</button>
+</div>

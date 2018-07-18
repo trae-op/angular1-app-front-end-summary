@@ -1,0 +1,22 @@
+
+<header-top></header-top>
+
+<article>
+    <h4 data-ng-if="!$ctrl.items && !$ctrl.items.length">The list is empty! You must registration and you will have header.</h4>
+    <button ng-if="$ctrl.Authorization()" type="button" class="btn btn-primary" ng-click="$ctrl.findMe()">Find me</button>
+    <ol>
+        <li data-ng-repeat="header in $ctrl.items">
+            <h2>
+                <a ng-href="{{'#/resume/'+ header._id}}">
+                    <strong ng-bind="header.position"></strong>
+                </a>
+            </h2>
+            <h4>
+                <strong ng-bind="header.name"></strong> - <span ng-bind="header.age + ' years old'"></span>
+            </h4>
+            <p><strong>Created: </strong><span ng-bind="header.created_at"></span></p>
+        </li>
+    </ol>
+
+    <pagination></pagination>
+</article>

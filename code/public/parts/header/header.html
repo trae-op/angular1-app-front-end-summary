@@ -1,0 +1,49 @@
+
+<header class="header-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" ng-click="showTopMenu()">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#/">IT Summary</a>
+            </div>
+            <div class="collapse navbar-collapse" ng-class="{'show': openTopMenu ? true : false}">
+                <ul class="nav navbar-nav" ng-if="$ctrl.routeParams">
+                    <li ng-class="{'active': !$ctrl.routeParams.pageName}">
+                        <a ng-href="{{'#/resume/' + $ctrl.routeParams.id}}">Front</a>
+                    </li>
+                    <li ng-class="{'active': $ctrl.routeParams.pageName === 'companies'}">
+                        <a ng-href="{{'#/page/' + $ctrl.routeParams.id + '/companies/1'}}">Companies</a>
+                    </li>
+                    <li ng-class="{'active': $ctrl.routeParams.pageName === 'projects'}">
+                        <a ng-href="{{'#/page/' + $ctrl.routeParams.id + '/projects/1'}}">Projects</a>
+                    </li>
+                    <li ng-class="{'active': $ctrl.routeParams.pageName === 'scripts'}">
+                        <a ng-href="{{'#/page/' + $ctrl.routeParams.id + '/scripts/1'}}">Scripts</a>
+                    </li>
+                    <li ng-class="{'active': $ctrl.routeParams.pageName === 'abouts'}">
+                        <a ng-href="{{'#/page/' + $ctrl.routeParams.id + '/abouts/1'}}">About</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active" ng-if="authorization()" uib-dropdown>
+                            <a href="" id="single-link" uib-dropdown-toggle><span class="glyphicon glyphicon-user"></span></a>
+                            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-link">
+                                <li role="menuitem"><a href="" ng-bind="getUser().name"></a></li>
+                                <li role="menuitem"><a href="" ng-bind="getUser().role"></a></li>
+                                <li role="menuitem"><a href="" ng-bind="getUser().email"></a></li>
+                                <li class="divider"></li>
+                                <li role="menuitem"><a href="" ng-click="logout()">Sign Up</a></li>
+                            </ul>
+                    </li>
+                    <li><a href="" ng-click="fbLogin()">FB</a></li>
+                    <li ng-if="!authorization()"><a href="" ng-click="open()"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    <li ng-if="!authorization()"><a href="" ng-click="registration()"><span class="glyphicon glyphicon-registration-mark"></span> Ragister</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

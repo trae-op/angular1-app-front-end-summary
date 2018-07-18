@@ -1,0 +1,31 @@
+{
+  "name": "my-resume",
+  "homepage": "https://github.com/trae-op/my-best-resume",
+  "authors": [
+    "Pronchenko Oleg <traeop@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.4.8",
+    "angular-bootstrap": "2.5.0",
+    "bootstrap-css-only": "3",
+    "angular-route": "1.4.10",
+    "lodash": "^4.17.10",
+    "ngstorage": "^0.3.11",
+    "components-font-awesome": "^5.0.6",
+    "angular-facebook": "^0.2.3",
+    "angular-sanitize": "1.4.8",
+    "bootstrap-social": "5.0.0",
+    "ng-google-signin": "^0.1.0"
+  }
+}

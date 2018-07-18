@@ -1,0 +1,26 @@
+
+<header-top></header-top>
+
+<article>
+  <h1 ng-bind="$ctrl.header.position"></h1>
+  <p>
+      <strong>Name: </strong>
+      <span ng-bind="$ctrl.header.name"></span>
+  </p>
+  <p>
+      <strong>Age: </strong>
+      <span ng-bind="$ctrl.header.age + ' years old'"></span>
+  </p>
+  <p>
+    <strong>Skills: </strong>
+    <span ng-bind="$ctrl.header.skills.join(', ')"></span>
+  </p>
+  <p>
+    <strong>Created: </strong>
+    <span ng-bind="$ctrl.header.created_at"></span>
+  </p>
+
+  <div ng-if="$ctrl.Authorization() && $ctrl.header.creator_email === $ctrl.getUser().email || $ctrl.getUser().role === 'Admin'">
+    <button class="btn btn-primary" type="button" ng-click="$ctrl.update()">Update</button>
+  </div>
+</article>

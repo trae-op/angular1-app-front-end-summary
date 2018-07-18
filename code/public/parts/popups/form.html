@@ -1,0 +1,36 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title" data-ng-bind="$ctrl.title"></h3>
+</div>
+<div class="modal-body" id="modal-body">
+    <form action="" name="form" id="form" novalidate>
+
+        <div class="form-group" data-ng-repeat="field in $ctrl.fields">
+
+            <label data-ng-bind="field.placeholder"></label>
+
+            <input data-ng-if="field.type === 'text' || field.type === 'email' || field.type === 'password' || field.name === 'confirm_password' || field.type === 'number'"
+                   placeholder="{{field.placeholder}}"
+                   type="{{field.type}}"
+                   class="form-control"
+                   ng-model="field.text"
+                   ng-required="field.required || false">
+
+            <textarea data-ng-if="field.type === 'textarea'"
+                      placeholder="{{field.placeholder}}"
+                      class="form-control"
+                      ng-model="field.text"
+                      ng-required="field.required || false"></textarea>
+
+            <input data-ng-if="field.type === 'checkbox'"
+                   type="checkbox"
+                   ng-model="field.checked"/>
+
+        </div>
+
+    </form>
+</div>
+<div class="modal-footer">
+<!--     <button form="form" ng-disabled="form.$invalid" class="btn btn-primary" type="button" ng-click="$ctrl.send($ctrl.fields)">Send</button> -->
+    <button form="form" ng-disabled="$ctrl.validationCustom(form)" class="btn btn-primary" type="button" ng-click="$ctrl.send($ctrl.fields)">Send</button>
+    <button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
+</div>

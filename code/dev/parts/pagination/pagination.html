@@ -1,0 +1,24 @@
+
+<nav ng-if="$ctrl.items.length && pagination.length > 1">
+  <ul class="pagination">
+    <li class="first" ng-if="routeParams.pageNumber !==  '1'">
+      <a ng-href="{{getHash + '/1'}}">First</a>
+    </li>
+    <li class="previous" ng-if="routeParams.pageNumber !==  '1'">
+      <a ng-href="{{getHash + '/' + prevPage()}}">Previous</a>
+    </li>
+    <li class="pointer"
+      ng-repeat="item in pagination"
+      ng-class="{'active': routeParams.pageNumber === (($index + 1) + '')}"
+      >
+      <a ng-if="showNumbering($index)" ng-href="{{getHash + '/' + ($index+1)}}" ng-bind="$index + 1"></a>
+      <span ng-if="showDots($index)" ng-bind="'...'"></span>
+    </li>
+    <li class="next" ng-if="routeParams.pageNumber !== ((pagination.length) + '')">
+      <a ng-href="{{getHash + '/' + nextPage()}}">Next</a>
+    </li>
+    <li class="last" ng-if="routeParams.pageNumber !== ((pagination.length) + '')">
+      <a ng-href="{{getHash + '/' + (pagination.length)}}">Last</a>
+    </li>
+  </ul>
+</nav>

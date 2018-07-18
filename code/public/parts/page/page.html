@@ -1,0 +1,27 @@
+
+<header-top></header-top>
+
+<article>
+    <h1 ng-bind="$ctrl.routeParams.pageName === 'abouts' ? $ctrl.changeTitle().cutLastSymbol() : $ctrl.changeTitle().allSymbols()"></h1>
+
+    <button ng-if="$ctrl.routeParams.pageName === 'abouts' && !$ctrl.items.length || $ctrl.routeParams.pageName !== 'abouts' && $ctrl.Authorization() && $ctrl.getUser().email === $ctrl.getCreatorEmailByHeader()" class="btn btn-primary" type="button" ng-click="$ctrl.add()" ng-bind="$ctrl.routeParams.pageName === 'abouts' ? 'Create' : 'Add'"></button>
+    <ol>
+      <li data-ng-repeat="item in $ctrl.items">
+        <h3>
+          <a ng-if="$ctrl.routeParams.pageName !== 'scripts'" ng-href="{{item.link}}" ng-bind="item.title"></a>
+          <span ng-if="$ctrl.routeParams.pageName === 'scripts'" ng-bind="item.title"></span>
+        </h3>
+        
+        <p ng-bind="item.description"></p>
+        <button ng-if="$ctrl.routeParams.pageName === 'scripts'" class="btn btn-primary" type="button" ng-click="$ctrl.loadScript(item)">Load Script</button>
+
+        <div class="control-btns" ng-if="$ctrl.Authorization() && $ctrl.getUser().email === $ctrl.getCreatorEmailByHeader() || $ctrl.getUser().role === 'Admin'">
+          <button class="btn btn-primary" type="button" ng-click="$ctrl.update(item, $index)">Update</button>
+          <button class="btn btn-danger" type="button" ng-click="$ctrl.delete(item._id, $index)">Delete</button>
+        </div>
+      </li>
+    </ol>
+
+    <pagination></pagination>
+
+</article>

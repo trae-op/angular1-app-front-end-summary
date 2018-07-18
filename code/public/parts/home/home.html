@@ -1,0 +1,21 @@
+
+<header-top></header-top>
+
+<article>
+
+    <h1>List Resumes</h1>
+    
+    <ol>
+        <li data-ng-repeat="header in $ctrl.headers">
+            <h2>
+                <a ng-href="{{'#/resume/'+ header._id}}">
+                    <strong ng-bind="header.position"></strong>
+                </a>
+            </h2>
+            <h4>
+                <strong ng-bind="header.name"></strong> - <span ng-bind="header.age + ' years old'"></span>
+            </h4>
+            <p><strong>Created: </strong><span ng-bind="header.created_at"></span></p>
+        </li>
+    </ol>
+</article>

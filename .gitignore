@@ -1,0 +1,11 @@
+.idea
+code/node_modules
+code/dev/bower_components
+test/ui/node_modules
+test/ui/results
+test/ui/config/local*.js*
+.tmp
+*sublime*
+*npm-debug.log
+
+

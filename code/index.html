@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="bower_components/bootstrap-css-only/css/bootstrap.min.css">
+        <link rel="stylesheet" href="bower_components/components-font-awesome/css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/styles.css">
+
+        <title>My Best Resume</title>
+
+    </head>
+
+    <body>
+
+        <main class="container" role="main">
+            <ng-view></ng-view>
+        </main>
+
+
+        <script type="text/javascript" src="bower_components/lodash/dist/lodash.min.js"></script>
+
+        <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+
+        <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+        <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+        <script type="text/javascript" src="angular-sanitize.min.js"></script>
+
+        <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
+
+        <script type="text/javascript" src="bower_components/ngstorage/ngStorage.min.js"></script>
+
+        <script type="text/javascript" src="bower_components/angular-facebook/lib/angular-facebook.js"></script>
+
+        <script type="text/javascript" src="config.js"></script>
+
+        <!-- START SHARED -->
+        <script type="text/javascript" src="js/shared/shared.module.js"></script>
+        <script type="text/javascript" src="js/shared/main-service/main.http.service.js"></script>
+        <script type="text/javascript" src="js/shared/main-service/main.authorization.service.js"></script>
+        <script type="text/javascript" src="js/shared/popups/popups.service.js"></script>
+        <script type="text/javascript" src="js/shared/pagination/pagination.service.js"></script>
+        <script type="text/javascript" src="js/shared/pagination/pagination.directive.js"></script>
+        <!-- END SHARED -->
+
+        <script type="text/javascript" src="js/header/header.module.js"></script>
+        <script type="text/javascript" src="js/header/header.directive.js"></script>
+        <script type="text/javascript" src="js/header/headers.service.js"></script>
+
+        <script type="text/javascript" src="js/page/page.module.js"></script>
+        <script type="text/javascript" src="js/page/page.directives.js"></script>
+        <script type="text/javascript" src="js/page/page.filters.js"></script>
+        <script type="text/javascript" src="js/page/page.service.js"></script>
+        <script type="text/javascript" src="js/page/page.controller.js"></script>
+        <script type="text/javascript" src="js/page/page.route.js"></script>
+
+        <script type="text/javascript" src="js/front/front.module.js"></script>
+        <script type="text/javascript" src="js/front/front.service.js"></script>
+        <script type="text/javascript" src="js/front/front.controller.js"></script>
+        <script type="text/javascript" src="js/front/front.route.js"></script>
+
+        <script type="text/javascript" src="js/home/home.module.js"></script>
+        <script type="text/javascript" src="js/home/home.service.js"></script>
+        <script type="text/javascript" src="js/home/home.controller.js"></script>
+        <script type="text/javascript" src="js/home/home.route.js"></script>
+
+        <script type="text/javascript" src="js/app.modules.js"></script>
+        <script type="text/javascript" src="js/app.routes.js"></script>
+
+    </body>
+</html>
