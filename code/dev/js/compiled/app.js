@@ -39,7 +39,7 @@
         FacebookProvider.init('184315939079210');
 
         GoogleSigninProvider.init({
-            client_id: '292952671581-2auml32hp866cn11v30e5ncvesvp4hi7.apps.googleusercontent.com',
+            client_id: '607355219083-p7ven3qhii2kijmd1utei3h260ph8dk7.apps.googleusercontent.com',
         });
 
         $routeProvider
