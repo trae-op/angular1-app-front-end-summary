@@ -15,6 +15,10 @@
                   return _.find(data, {name: prop});
                 };
 
+              scope.originPath = function () {
+                return window.ORIGIN_PATH;
+              };
+
                 function facebookLogin(ctrlPopup) {
                   mainAuthorizationService.authFacebook(function (userResponse) {
                     // check if header is existing

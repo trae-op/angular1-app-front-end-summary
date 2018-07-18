@@ -116,6 +116,13 @@
 (function () {
     'use strict';
 
+    angular.module('header', []);
+
+})();
+
+(function () {
+    'use strict';
+
     angular.module('home', [
         'ngRoute'
     ]);
@@ -138,20 +145,6 @@
 
     angular.module('home')
         .config(homeRoute);
-
-})();
-
-(function () {
-    'use strict';
-
-    angular.module('header', []);
-
-})();
-
-(function () {
-    'use strict';
-
-    angular.module('users', []);
 
 })();
 
@@ -190,6 +183,13 @@
         'ngRoute',
         'ui.bootstrap'
     ]);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('users', []);
 
 })();
 
@@ -331,62 +331,6 @@
 })();
 
 
-(function () {
-    'use strict';
-
-    homeController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "popupsService", "homeService", "mainAuthorizationService", "paginationService"];
-    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, paginationService) {
-        var $ctrl = this;
-
-        // This is necessary for pagination menu because 'hash' can be different
-        $scope.getHash = '#';
-
-      $ctrl.items = [];
-
-        // for the correct "reverse"
-        mainHttpService.cacheData = {};
-
-        mainHttpService.get('headers', function (response) {
-            $ctrl.items = _.reverse(response);
-            $scope.prevItems = $ctrl.items;
-        });
-
-        $ctrl.Authorization = function() {
-            return mainAuthorizationService.checkAuthorization();
-        };
-
-        $ctrl.findMe = function() {
-          $ctrl.items = [_.find(mainHttpService.cacheData.headers, { 'creator_email': $ctrl.getUser().email })];
-          $scope.prevItems = $ctrl.items;
-        };
-
-        $ctrl.getUser = function() {
-          return mainAuthorizationService.getUser();
-        };
-       
-    }
-
-    angular.module('home')
-        .controller('homeController', homeController);
-
-})();
-
-
-(function () {
-    'use strict';
-
-    homeService.$inject = ["$http", "$log", "$routeParams"];
-    function homeService ($http, $log, $routeParams) {
-      var _this = this;
-    }
-
-    angular
-        .module('home')
-        .service('homeService', homeService);
-
-})();
-
-
 
 
 (function () {
@@ -402,6 +346,10 @@
                 var getProp = function(data, prop) {
                   return _.find(data, {name: prop});
                 };
+
+              scope.originPath = function () {
+                return window.ORIGIN_PATH;
+              };
 
                 function facebookLogin(ctrlPopup) {
                   mainAuthorizationService.authFacebook(function (userResponse) {
@@ -591,17 +539,59 @@
 
 })();
 
+
 (function () {
     'use strict';
 
-    usersService.$inject = ["$log"];
-    function usersService($log) {
+    homeController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "popupsService", "homeService", "mainAuthorizationService", "paginationService"];
+    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, paginationService) {
+        var $ctrl = this;
 
+        // This is necessary for pagination menu because 'hash' can be different
+        $scope.getHash = '#';
+
+      $ctrl.items = [];
+
+        // for the correct "reverse"
+        mainHttpService.cacheData = {};
+
+        mainHttpService.get('headers', function (response) {
+            $ctrl.items = _.reverse(response);
+            $scope.prevItems = $ctrl.items;
+        });
+
+        $ctrl.Authorization = function() {
+            return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.findMe = function() {
+          $ctrl.items = [_.find(mainHttpService.cacheData.headers, { 'creator_email': $ctrl.getUser().email })];
+          $scope.prevItems = $ctrl.items;
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+       
+    }
+
+    angular.module('home')
+        .controller('homeController', homeController);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    homeService.$inject = ["$http", "$log", "$routeParams"];
+    function homeService ($http, $log, $routeParams) {
+      var _this = this;
     }
 
     angular
-        .module('users')
-        .service('usersService', usersService);
+        .module('home')
+        .service('homeService', homeService);
 
 })();
 
@@ -1401,5 +1391,19 @@
     angular
         .module('shared')
         .service('popupsService', popupsService);
+
+})();
+
+(function () {
+    'use strict';
+
+    usersService.$inject = ["$log"];
+    function usersService($log) {
+
+    }
+
+    angular
+        .module('users')
+        .service('usersService', usersService);
 
 })();
