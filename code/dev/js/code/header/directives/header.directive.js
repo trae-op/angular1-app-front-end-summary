@@ -177,7 +177,8 @@
                         var filledUser = {
                           name: getProp(data, 'name').text,
                           email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text
+                          password: getProp(data, 'password').text,
+                          url: window.ORIGIN_PATH
                         };
 
                       mainHttpService.authorization('authorization', filledUser, function () {
