@@ -137,7 +137,6 @@ gulp.task('copy', [
     'copyConfig'
 ]);
 
-
 gulp.task('build:dev:css', ['bowerBuildCss', 'sass']);
 gulp.task('build:dev:js', ['bowerBuildJs', 'scripts']);
 gulp.task('build:dev', ['build:dev:css', 'build:dev:js', 'fonts']);
