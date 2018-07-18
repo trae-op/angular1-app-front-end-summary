@@ -6,7 +6,7 @@
     function pagination($log, $routeParams, paginationService, $timeout) {
         return {
             restrict: 'EA',
-            templateUrl: '../../../../parts/pagination/pagination.html',
+            templateUrl: window.ORIGIN_PATH + 'parts/pagination/pagination.html',
             link: function (scope, element, attrs) {
               
                 scope.routeParams = $routeParams;

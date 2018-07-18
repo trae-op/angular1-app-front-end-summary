@@ -8,7 +8,7 @@
     function headerTop($log, $uibModal, $routeParams, $localStorage, popupsService, mainHttpService, mainAuthorizationService, headersService) {
         return {
             restrict: 'EA',
-            templateUrl: window.location.origin + window.location.pathname + 'parts/header/header.html',
+            templateUrl: window.ORIGIN_PATH + 'parts/header/header.html',
             link: function (scope, element, attrs) {
 
                 var getProp = function(data, prop) {
