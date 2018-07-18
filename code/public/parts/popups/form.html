@@ -30,7 +30,12 @@
     </form>
 </div>
 <div class="modal-footer">
-<!--     <button form="form" ng-disabled="form.$invalid" class="btn btn-primary" type="button" ng-click="$ctrl.send($ctrl.fields)">Send</button> -->
+    <!--$ctrl.additionalButtons-->
+    <button class="btn btn-default"
+            data-ng-if="$ctrl.additionalButtons"
+            data-ng-repeat="button in $ctrl.additionalButtons"
+            type="button" ng-click="button.handler($ctrl)" ng-bind="button.text"></button>
+
     <button form="form" ng-disabled="$ctrl.validationCustom(form)" class="btn btn-primary" type="button" ng-click="$ctrl.send($ctrl.fields)">Send</button>
     <button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
 </div>
