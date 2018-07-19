@@ -174,39 +174,37 @@
                         ]
                     }, function (data) {
 
-                      //   var filledUser = {
-                      //     name: getProp(data, 'name').text,
-                      //     email: getProp(data, 'email').text,
-                      //     password: getProp(data, 'password').text
-                      //   };
-                      //
-                      //   var filledLogin = {
-                      //     email: getProp(data, 'email').text,
-                      //     password: getProp(data, 'password').text
-                      //   };
-                      //
-                      // mainHttpService.add('users', filledUser, function (userResponse) {
-                      //   mainHttpService.login('users/login', filledLogin, function (responseLogin) {
-                      //     mainHttpService.add('headers', headersService.defaultHeader(filledUser.name, filledUser.email), function (header) {
-                      //       scope.openTopMenu = false;
-                      //       window.location.hash = 'resume/' + header._id;
-                      //     });
-                      //   });
-                      // });
-
                         var filledUser = {
                           name: getProp(data, 'name').text,
                           email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text,
-                          url: scope.originPath()
+                          password: getProp(data, 'password').text
                         };
 
-                        //$log.info(filledUser);
+                        var filledLogin = {
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text
+                        };
 
-                      mainHttpService.authorization('authorization', filledUser, function (userResponse) {
-                        popupsService.messages('Message', {data: {message: 'You need to go to service email and account activate!!!'}});
-                        $localStorage.temporaryDataUser = userResponse;
+                      mainHttpService.add('users', filledUser, function (userResponse) {
+                        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+                          mainHttpService.add('headers', headersService.defaultHeader(filledUser.name, filledUser.email), function (header) {
+                            scope.openTopMenu = false;
+                            window.location.hash = 'resume/' + header._id;
+                          });
+                        });
                       });
+
+                      // --->> Registration by email. In progress!!! <<---
+                      //   var filledUser = {
+                      //     name: getProp(data, 'name').text,
+                      //     email: getProp(data, 'email').text,
+                      //     password: getProp(data, 'password').text,
+                      //     url: scope.originPath()
+                      //   };
+                      //
+                      // mainHttpService.authorization('authorization', filledUser, function (userResponse) {
+                      //   popupsService.messages('Message', {data: {message: 'You need to go to service email and account activate!!!'}});
+                      // });
 
                     });
                 };

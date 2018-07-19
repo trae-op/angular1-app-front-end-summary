@@ -28,14 +28,16 @@
       };
 
 
+      // --->> Registration by email. In progress!!! <<---
       _this.authorization = function (nameRequest, data, successCallback) {
         $localStorage.temporaryDataUser = false;
         mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
-         // $localStorage.temporaryDataUser = response.data;
+          $localStorage.temporaryDataUser = response.data;
           successCallback(response.data);
         });
       };
 
+      // --->> Activation by email. In progress!!! <<---
       _this.accountActivationUser = function (nameRequest, data, successCallback) {
         mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
           successCallback(response.data);
@@ -68,10 +70,8 @@
         window.location.hash = '/';
       };
 
-      _this.update = function (nameRequest, data, successCallback) {    
-        //$log.info('_this.cacheData', _this.cacheData)
+      _this.update = function (nameRequest, data, successCallback) {
         mainRequest('put', [mainUrl() + nameRequest, data], function (response) {
-          //$log.info('response',_this.cacheData[nameRequest]);
           _this.cacheData[nameRequest][cacheIndex(nameRequest, { _id: response.data._id })] = response.data;
           successCallback(response.data);
         });  

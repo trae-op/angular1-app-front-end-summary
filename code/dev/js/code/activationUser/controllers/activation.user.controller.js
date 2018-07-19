@@ -1,4 +1,8 @@
-
+/*
+*
+* The Controller of activation page after get message by email about account activation. In progress.
+*
+* */
 
 (function () {
   'use strict';
@@ -7,9 +11,6 @@
     var $ctrl = this;
 
     //$ctrl.routeParams = $routeParams;
-
-
-    $log.info('$localStorage', $localStorage);
 
     if ($localStorage.temporaryDataUser) {
       var filledUser = {

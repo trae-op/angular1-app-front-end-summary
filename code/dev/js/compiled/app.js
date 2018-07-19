@@ -58,6 +58,12 @@
 })();
 
 
+/*
+*
+* The Module of activation page after get message by email about account activation. In progress.
+*
+* */
+
 (function () {
   'use strict';
 
@@ -67,6 +73,12 @@
 
 })();
 
+
+/*
+*
+* The Router of activation page after get message by email about account activation. In progress.
+*
+* */
 
 (function () {
 
@@ -84,6 +96,13 @@
 
   angular.module('activation')
     .config(activationUserRouter);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('header', []);
 
 })();
 
@@ -112,13 +131,6 @@
 
     angular.module('front')
         .config(frontRoute);
-
-})();
-
-(function () {
-    'use strict';
-
-    angular.module('header', []);
 
 })();
 
@@ -195,7 +207,11 @@
 
 })();
 
-
+/*
+*
+* The Controller of activation page after get message by email about account activation. In progress.
+*
+* */
 
 (function () {
   'use strict';
@@ -205,9 +221,6 @@
     var $ctrl = this;
 
     //$ctrl.routeParams = $routeParams;
-
-
-    $log.info('$localStorage', $localStorage);
 
     if ($localStorage.temporaryDataUser) {
       var filledUser = {
@@ -247,95 +260,6 @@
 
 })();
 
-
-
-(function () {
-    'use strict';
-
-    frontController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "frontService", "popupsService", "mainAuthorizationService"];
-    function frontController($scope, $routeParams, $log, mainHttpService, frontService, popupsService, mainAuthorizationService) {
-        var $ctrl = this;
-
-        $ctrl.routeParams = $routeParams;
-
-        mainHttpService.getById('headers', $ctrl.routeParams.id, function (response) {
-            $ctrl.header = response[0];
-        });
-
-        $ctrl.Authorization = function() {
-          return mainAuthorizationService.checkAuthorization();
-        };
-
-        $ctrl.getUser = function() {
-          return mainAuthorizationService.getUser();
-        };
-
-
-
-        $ctrl.update = function() {
-          popupsService.forms({
-              title: 'Update',
-              fields: [
-                {
-                    type: 'text',
-                    placeholder: 'position',
-                    name: 'position',
-                    text: $ctrl.header.position,
-                    required: true
-                },
-                {
-                    type: 'text',
-                    placeholder: 'age',
-                    name: 'age',
-                    text: $ctrl.header.age,
-                    required: true
-                }
-              ]
-          }, function (data) {
-            var newData = frontService.filledData(data);
-            newData.name = $ctrl.getUser().name;
-            newData._id = $ctrl.header._id;
-            newData.creator_email = $ctrl.header.creator_email;
-            newData.skills = $ctrl.header.skills;
-            mainHttpService.update('headers', newData, function(response) {
-              $ctrl.header = response;
-            });
-          });
-        };
-
-    }
-
-    angular.module('front')
-        .controller('frontController', frontController);
-
-})();
-
-
-(function () {
-    'use strict';
-
-    frontService.$inject = ["$log"];
-    function frontService($log) {
-      var _this = this;
-      
-      _this.filledData = function (data) {
-        var getProp = function(prop) {
-          return _.find(data, {name: prop});
-        };
-
-        return {
-          position: getProp('position').text,
-          age: getProp('age').text
-        };
-      };
-
-    }
-
-    angular
-        .module('front')
-        .service('frontService', frontService);
-
-})();
 
 
 
@@ -513,39 +437,37 @@
                         ]
                     }, function (data) {
 
-                      //   var filledUser = {
-                      //     name: getProp(data, 'name').text,
-                      //     email: getProp(data, 'email').text,
-                      //     password: getProp(data, 'password').text
-                      //   };
-                      //
-                      //   var filledLogin = {
-                      //     email: getProp(data, 'email').text,
-                      //     password: getProp(data, 'password').text
-                      //   };
-                      //
-                      // mainHttpService.add('users', filledUser, function (userResponse) {
-                      //   mainHttpService.login('users/login', filledLogin, function (responseLogin) {
-                      //     mainHttpService.add('headers', headersService.defaultHeader(filledUser.name, filledUser.email), function (header) {
-                      //       scope.openTopMenu = false;
-                      //       window.location.hash = 'resume/' + header._id;
-                      //     });
-                      //   });
-                      // });
-
                         var filledUser = {
                           name: getProp(data, 'name').text,
                           email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text,
-                          url: scope.originPath()
+                          password: getProp(data, 'password').text
                         };
 
-                        //$log.info(filledUser);
+                        var filledLogin = {
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text
+                        };
 
-                      mainHttpService.authorization('authorization', filledUser, function (userResponse) {
-                        popupsService.messages('Message', {data: {message: 'You need to go to service email and account activate!!!'}});
-                        $localStorage.temporaryDataUser = userResponse;
+                      mainHttpService.add('users', filledUser, function (userResponse) {
+                        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+                          mainHttpService.add('headers', headersService.defaultHeader(filledUser.name, filledUser.email), function (header) {
+                            scope.openTopMenu = false;
+                            window.location.hash = 'resume/' + header._id;
+                          });
+                        });
                       });
+
+                      // --->> Registration by email. In progress!!! <<---
+                      //   var filledUser = {
+                      //     name: getProp(data, 'name').text,
+                      //     email: getProp(data, 'email').text,
+                      //     password: getProp(data, 'password').text,
+                      //     url: scope.originPath()
+                      //   };
+                      //
+                      // mainHttpService.authorization('authorization', filledUser, function (userResponse) {
+                      //   popupsService.messages('Message', {data: {message: 'You need to go to service email and account activate!!!'}});
+                      // });
 
                     });
                 };
@@ -583,6 +505,95 @@
     angular
         .module('header')
         .service('headersService', headersService);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    frontController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "frontService", "popupsService", "mainAuthorizationService"];
+    function frontController($scope, $routeParams, $log, mainHttpService, frontService, popupsService, mainAuthorizationService) {
+        var $ctrl = this;
+
+        $ctrl.routeParams = $routeParams;
+
+        mainHttpService.getById('headers', $ctrl.routeParams.id, function (response) {
+            $ctrl.header = response[0];
+        });
+
+        $ctrl.Authorization = function() {
+          return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+
+
+
+        $ctrl.update = function() {
+          popupsService.forms({
+              title: 'Update',
+              fields: [
+                {
+                    type: 'text',
+                    placeholder: 'position',
+                    name: 'position',
+                    text: $ctrl.header.position,
+                    required: true
+                },
+                {
+                    type: 'text',
+                    placeholder: 'age',
+                    name: 'age',
+                    text: $ctrl.header.age,
+                    required: true
+                }
+              ]
+          }, function (data) {
+            var newData = frontService.filledData(data);
+            newData.name = $ctrl.getUser().name;
+            newData._id = $ctrl.header._id;
+            newData.creator_email = $ctrl.header.creator_email;
+            newData.skills = $ctrl.header.skills;
+            mainHttpService.update('headers', newData, function(response) {
+              $ctrl.header = response;
+            });
+          });
+        };
+
+    }
+
+    angular.module('front')
+        .controller('frontController', frontController);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    frontService.$inject = ["$log"];
+    function frontService($log) {
+      var _this = this;
+      
+      _this.filledData = function (data) {
+        var getProp = function(prop) {
+          return _.find(data, {name: prop});
+        };
+
+        return {
+          position: getProp('position').text,
+          age: getProp('age').text
+        };
+      };
+
+    }
+
+    angular
+        .module('front')
+        .service('frontService', frontService);
 
 })();
 
@@ -1155,14 +1166,16 @@
       };
 
 
+      // --->> Registration by email. In progress!!! <<---
       _this.authorization = function (nameRequest, data, successCallback) {
         $localStorage.temporaryDataUser = false;
         mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
-         // $localStorage.temporaryDataUser = response.data;
+          $localStorage.temporaryDataUser = response.data;
           successCallback(response.data);
         });
       };
 
+      // --->> Activation by email. In progress!!! <<---
       _this.accountActivationUser = function (nameRequest, data, successCallback) {
         mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
           successCallback(response.data);
@@ -1195,10 +1208,8 @@
         window.location.hash = '/';
       };
 
-      _this.update = function (nameRequest, data, successCallback) {    
-        //$log.info('_this.cacheData', _this.cacheData)
+      _this.update = function (nameRequest, data, successCallback) {
         mainRequest('put', [mainUrl() + nameRequest, data], function (response) {
-          //$log.info('response',_this.cacheData[nameRequest]);
           _this.cacheData[nameRequest][cacheIndex(nameRequest, { _id: response.data._id })] = response.data;
           successCallback(response.data);
         });  
