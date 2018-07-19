@@ -5,7 +5,7 @@
 
   function activationUserRouter($routeProvider) {
     $routeProvider
-      .when("/activation/:hash", {
+      .when("/account_activation", {
         templateUrl : "parts/activation-user/activation.user.html",
         controller: "activationUserController",
         controllerAs: '$ctrl'

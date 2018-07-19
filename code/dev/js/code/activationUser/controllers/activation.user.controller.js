@@ -6,7 +6,10 @@
   function activationUserController($scope, $log, $routeParams, mainHttpService, $localStorage, mainAuthorizationService, headersService) {
     var $ctrl = this;
 
-    $ctrl.routeParams = $routeParams;
+    //$ctrl.routeParams = $routeParams;
+
+
+    $log.info('$localStorage', $localStorage);
 
     if ($localStorage.temporaryDataUser) {
       var filledUser = {
@@ -14,7 +17,7 @@
         email: $localStorage.temporaryDataUser.email,
         password: $localStorage.temporaryDataUser.password,
         uuid: $localStorage.temporaryDataUser.uuid,
-        hash: $ctrl.routeParams.hash
+        hash: $localStorage.temporaryDataUser.hash
       };
 
       var filledLogin = {
@@ -22,6 +25,8 @@
         password: $localStorage.temporaryDataUser.password,
         rememberMe: true
       };
+
+
       mainHttpService.accountActivationUser('activation', filledUser, function (response) {
         $localStorage.temporaryDataUser = false;
         mainHttpService.login('users/login', filledLogin, function (responseLogin) {
