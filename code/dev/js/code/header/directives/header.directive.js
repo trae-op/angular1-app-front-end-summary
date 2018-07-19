@@ -115,11 +115,11 @@
                         ],
                         additionalButtons: [
                           {
-                            text: 'Connect with Facebook',
+                            text: 'Facebook',
                             handler: facebookLogin
                           },
                           {
-                            text: 'Connect with Google',
+                            text: 'Google',
                             handler: googleLogin
                           }
                         ]
