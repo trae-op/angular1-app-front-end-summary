@@ -121,7 +121,7 @@ gulp.task('scripts', function() {
     ])
         .pipe(ngAnnotate())
         .pipe(concat('app.js'))
-        //.pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest(devFolder + 'js/compiled/'));
 });
 
