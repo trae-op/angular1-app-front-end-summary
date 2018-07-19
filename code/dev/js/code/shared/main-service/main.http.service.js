@@ -67,7 +67,6 @@
         mainAuthorizationService.clearUserMyself();
         mainAuthorizationService.setToken();
         mainAuthorizationService.clearAuthHeaderForAPI();
-        window.location.hash = '/';
       };
 
       _this.update = function (nameRequest, data, successCallback) {
