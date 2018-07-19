@@ -4,7 +4,9 @@
 <article>
     <h1 ng-bind="$ctrl.routeParams.pageName === 'abouts' ? $ctrl.changeTitle().cutLastSymbol() : $ctrl.changeTitle().allSymbols()"></h1>
 
-    <button ng-if="$ctrl.routeParams.pageName === 'abouts' && !$ctrl.items.length || $ctrl.routeParams.pageName !== 'abouts' && $ctrl.Authorization() && $ctrl.getUser().email === $ctrl.getCreatorEmailByHeader()" class="btn btn-primary" type="button" ng-click="$ctrl.add()" ng-bind="$ctrl.routeParams.pageName === 'abouts' ? 'Create' : 'Add'"></button>
+    <div class="control-btns" ng-if="$ctrl.Authorization() && $ctrl.getUser().email === $ctrl.getCreatorEmailByHeader() || $ctrl.getUser().role === 'Admin'">
+        <button ng-if="$ctrl.routeParams.pageName === 'abouts' && !$ctrl.items.length || $ctrl.routeParams.pageName !== 'abouts'" class="btn btn-primary" type="button" ng-click="$ctrl.add()" ng-bind="$ctrl.routeParams.pageName === 'abouts' ? 'Create' : 'Add'"></button>
+    </div>
     <ol>
       <li data-ng-repeat="item in $ctrl.items">
         <h3>
