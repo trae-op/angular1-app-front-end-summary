@@ -19,51 +19,38 @@
                 return window.ORIGIN_PATH;
               };
 
+              function connectWithFacebookGoogle(userResponse, ctrlPopup) {
+                // check if header is existing
+                mainHttpService.getByEmail('headers', userResponse.email, function(responseHeaders) {
+                  userResponse.rememberMe = true;
+                  mainHttpService.login('users/login', userResponse, function (responseLogin) {
+                    // close Popup
+                    ctrlPopup.cancel();
+                    if (responseHeaders.length <= 0) {
+                      mainHttpService.add('headers', headersService.defaultHeader(scope.getUser().name, scope.getUser().email), function (header) {
+                        scope.openTopMenu = false;
+                        window.location.hash = 'resume/' + header._id;
+                      });
+                    } else {
+                      scope.openTopMenu = false;
+                      window.location.hash = 'resume/' + responseHeaders[0]._id;
+                    }
+                  });
+                });
+              }
+
                 function facebookLogin(ctrlPopup) {
                   mainAuthorizationService.authFacebook(function (userResponse) {
-                    // check if header is existing
-                    mainHttpService.getByEmail('headers', userResponse.email, function(responseHeaders) {
-                      userResponse.rememberMe = true;
-                      mainHttpService.login('users/login', userResponse, function (responseLogin) {
-                        // close Popup
-                        ctrlPopup.cancel();
-                        if (responseHeaders.length <= 0) {
-                          mainHttpService.add('headers', headersService.defaultHeader(scope.getUser().name, scope.getUser().email), function (header) {
-                            scope.openTopMenu = false;
-                            window.location.hash = 'resume/' + header._id;
-                          });
-                        } else {
-                          scope.openTopMenu = false;
-                          window.location.hash = 'resume/' + responseHeaders[0]._id;
-                        }
-                      });
-                    });
+                    connectWithFacebookGoogle(userResponse, ctrlPopup);
                   });
                 }
 
                 function googleLogin(ctrlPopup) {
                   mainAuthorizationService.authGoogle(function (userResponse) {
-                    var userResponse = {
+                    connectWithFacebookGoogle({
                       name: userResponse.w3.ig,
                       email: userResponse.w3.U3
-                    };
-                    // check if header is existing
-                    mainHttpService.getByEmail('headers', userResponse.email, function(responseHeaders) {
-                      userResponse.rememberMe = true;
-                      mainHttpService.login('users/login', userResponse, function (responseLogin) {
-                        // close Popup
-                        ctrlPopup.cancel();
-                        if (responseHeaders.length <= 0) {
-                          mainHttpService.add('headers', headersService.defaultHeader(scope.getUser().name, scope.getUser().email), function (header) {
-                            scope.openTopMenu = false;
-                            window.location.hash = 'resume/' + header._id;
-                          });
-                        } else {
-                          scope.openTopMenu = false;
-                          window.location.hash = 'resume/' + responseHeaders[0]._id;
-                        }
-                      });
-                    });
+                    }, ctrlPopup);
                   });
                 }
 
