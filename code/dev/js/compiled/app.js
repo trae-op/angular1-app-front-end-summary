@@ -511,16 +511,31 @@
                         var filledUser = {
                           name: getProp(data, 'name').text,
                           email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text,
-                          url: window.ORIGIN_PATH
+                          password: getProp(data, 'password').text
+                          //url: window.ORIGIN_PATH
                         };
 
-                      mainHttpService.authorization('authorization', filledUser, function () {
-                        scope.openTopMenu = false;
+                        var filledLogin = {
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text
+                        };
 
-                        popupsService.messages('User activation', {
-                          data: { message: 'You need to go to your email service and activate account!'}
+                      mainHttpService.add('users', filledUser, function (userResponse) {
+                        //scope.openTopMenu = false;
+
+                        // popupsService.messages('User activation', {
+                        //   data: { message: 'You need to go to your email service and activate account!'}
+                        // });
+
+                        //$log.info(userResponse);
+
+                        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+                          mainHttpService.add('headers', headersService.defaultHeader(responseLogin.name, responseLogin.email), function (header) {
+                            scope.openTopMenu = false;
+                            window.location.hash = 'resume/' + header._id;
+                          });
                         });
+
                       });
 
                     });
@@ -1134,8 +1149,7 @@
       _this.authorization = function (nameRequest, data, successCallback) {
         $localStorage.temporaryDataUser = false;
         mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
-          $log.info(response);
-          $localStorage.temporaryDataUser = response.data;
+         // $localStorage.temporaryDataUser = response.data;
           successCallback(response.data);
         });
       };

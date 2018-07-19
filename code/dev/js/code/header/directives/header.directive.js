@@ -177,15 +177,20 @@
                         var filledUser = {
                           name: getProp(data, 'name').text,
                           email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text,
-                          url: window.ORIGIN_PATH
+                          password: getProp(data, 'password').text
                         };
 
-                      mainHttpService.authorization('authorization', filledUser, function () {
-                        scope.openTopMenu = false;
+                        var filledLogin = {
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text
+                        };
 
-                        popupsService.messages('User activation', {
-                          data: { message: 'You need to go to your email service and activate account!'}
+                      mainHttpService.add('users', filledUser, function (userResponse) {
+                        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+                          mainHttpService.add('headers', headersService.defaultHeader(responseLogin.name, responseLogin.email), function (header) {
+                            scope.openTopMenu = false;
+                            window.location.hash = 'resume/' + header._id;
+                          });
                         });
                       });
 

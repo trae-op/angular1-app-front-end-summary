@@ -31,8 +31,7 @@
       _this.authorization = function (nameRequest, data, successCallback) {
         $localStorage.temporaryDataUser = false;
         mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
-          $log.info(response);
-          $localStorage.temporaryDataUser = response.data;
+         // $localStorage.temporaryDataUser = response.data;
           successCallback(response.data);
         });
       };
