@@ -169,7 +169,8 @@
 
                         var filledLogin = {
                           email: getProp(data, 'email').text,
-                          password: getProp(data, 'password').text
+                          password: getProp(data, 'password').text,
+                          rememberMe: true
                         };
 
                       mainHttpService.add('users', filledUser, function (userResponse) {
