@@ -187,7 +187,7 @@
 
                       mainHttpService.add('users', filledUser, function (userResponse) {
                         mainHttpService.login('users/login', filledLogin, function (responseLogin) {
-                          mainHttpService.add('headers', headersService.defaultHeader(responseLogin.name, responseLogin.email), function (header) {
+                          mainHttpService.add('headers', headersService.defaultHeader(filledLogin.name, filledLogin.email), function (header) {
                             scope.openTopMenu = false;
                             window.location.hash = 'resume/' + header._id;
                           });

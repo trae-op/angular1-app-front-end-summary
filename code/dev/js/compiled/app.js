@@ -198,53 +198,6 @@
 
 
 (function () {
-  'use strict';
-
-  activationUserController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "$localStorage", "mainAuthorizationService", "headersService"];
-  function activationUserController($scope, $log, $routeParams, mainHttpService, $localStorage, mainAuthorizationService, headersService) {
-    var $ctrl = this;
-
-    $ctrl.routeParams = $routeParams;
-
-    if ($localStorage.temporaryDataUser) {
-      var filledUser = {
-        name: $localStorage.temporaryDataUser.name,
-        email: $localStorage.temporaryDataUser.email,
-        password: $localStorage.temporaryDataUser.password,
-        uuid: $localStorage.temporaryDataUser.uuid,
-        hash: $ctrl.routeParams.hash
-      };
-
-      var filledLogin = {
-        email: $localStorage.temporaryDataUser.email,
-        password: $localStorage.temporaryDataUser.password,
-        rememberMe: true
-      };
-      mainHttpService.accountActivationUser('activation', filledUser, function (response) {
-        $localStorage.temporaryDataUser = false;
-        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
-          mainHttpService.add('headers', headersService.defaultHeader(getUser().name, getUser().email), function (responseHeaders) {
-            $log.info('$localStorage', $localStorage);
-            $ctrl.message = 'Your account successfully activated!!!';
-          });
-        });
-      });
-    }
-
-    function getUser() {
-      return mainAuthorizationService.getUser();
-    }
-
-  }
-
-  angular.module('activation')
-    .controller('activationUserController', activationUserController);
-
-})();
-
-
-
-(function () {
     'use strict';
 
     frontController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "frontService", "popupsService", "mainAuthorizationService"];
@@ -302,6 +255,53 @@
 
     angular.module('front')
         .controller('frontController', frontController);
+
+})();
+
+
+
+(function () {
+  'use strict';
+
+  activationUserController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "$localStorage", "mainAuthorizationService", "headersService"];
+  function activationUserController($scope, $log, $routeParams, mainHttpService, $localStorage, mainAuthorizationService, headersService) {
+    var $ctrl = this;
+
+    $ctrl.routeParams = $routeParams;
+
+    if ($localStorage.temporaryDataUser) {
+      var filledUser = {
+        name: $localStorage.temporaryDataUser.name,
+        email: $localStorage.temporaryDataUser.email,
+        password: $localStorage.temporaryDataUser.password,
+        uuid: $localStorage.temporaryDataUser.uuid,
+        hash: $ctrl.routeParams.hash
+      };
+
+      var filledLogin = {
+        email: $localStorage.temporaryDataUser.email,
+        password: $localStorage.temporaryDataUser.password,
+        rememberMe: true
+      };
+      mainHttpService.accountActivationUser('activation', filledUser, function (response) {
+        $localStorage.temporaryDataUser = false;
+        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+          mainHttpService.add('headers', headersService.defaultHeader(getUser().name, getUser().email), function (responseHeaders) {
+            $log.info('$localStorage', $localStorage);
+            $ctrl.message = 'Your account successfully activated!!!';
+          });
+        });
+      });
+    }
+
+    function getUser() {
+      return mainAuthorizationService.getUser();
+    }
+
+  }
+
+  angular.module('activation')
+    .controller('activationUserController', activationUserController);
 
 })();
 
@@ -512,7 +512,6 @@
                           name: getProp(data, 'name').text,
                           email: getProp(data, 'email').text,
                           password: getProp(data, 'password').text
-                          //url: window.ORIGIN_PATH
                         };
 
                         var filledLogin = {
@@ -521,21 +520,12 @@
                         };
 
                       mainHttpService.add('users', filledUser, function (userResponse) {
-                        //scope.openTopMenu = false;
-
-                        // popupsService.messages('User activation', {
-                        //   data: { message: 'You need to go to your email service and activate account!'}
-                        // });
-
-                        //$log.info(userResponse);
-
                         mainHttpService.login('users/login', filledLogin, function (responseLogin) {
-                          mainHttpService.add('headers', headersService.defaultHeader(responseLogin.name, responseLogin.email), function (header) {
+                          mainHttpService.add('headers', headersService.defaultHeader(filledLogin.name, filledLogin.email), function (header) {
                             scope.openTopMenu = false;
                             window.location.hash = 'resume/' + header._id;
                           });
                         });
-
                       });
 
                     });
