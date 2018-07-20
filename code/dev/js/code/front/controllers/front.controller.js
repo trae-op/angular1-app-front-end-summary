@@ -3,7 +3,7 @@
 (function () {
     'use strict';
 
-    function frontController($scope, $routeParams, $log, mainHttpService, frontService, popupsService, mainAuthorizationService) {
+    function frontController($scope, $routeParams, $log, mainHttpService, frontService, popupsService, mainAuthorizationService, mainOtherService) {
         var $ctrl = this;
 
         $ctrl.routeParams = $routeParams;
@@ -20,7 +20,9 @@
           return mainAuthorizationService.getUser();
         };
 
-
+        $ctrl.loaderCheck = function () {
+          return mainOtherService.loader.activateLoader;
+        };
 
         $ctrl.update = function() {
           popupsService.forms({

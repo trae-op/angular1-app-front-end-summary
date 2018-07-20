@@ -3,7 +3,7 @@
 (function () {
     'use strict';
 
-    function pageController($scope, $routeParams, $log, mainHttpService, popupsService, pageService, paginationService, mainAuthorizationService) {
+    function pageController($scope, $routeParams, $log, mainHttpService, popupsService, pageService, paginationService, mainAuthorizationService, mainOtherService) {
         var $ctrl = this;
 
         $ctrl.routeParams = $routeParams;
@@ -18,6 +18,10 @@
               $scope.prevItems = $ctrl.items;
           });
         });
+
+        $ctrl.loaderCheck = function () {
+          return mainOtherService.loader.activateLoader;
+        };
 
         $ctrl.getCreatorEmailByHeader = function() {
           return pageService.creatorEmail;

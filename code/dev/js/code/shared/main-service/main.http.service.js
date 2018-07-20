@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    function mainHttpService($http, $log, $localStorage, popupsService, mainAuthorizationService) {
+    function mainHttpService($http, $log, $localStorage, popupsService, mainAuthorizationService, mainOtherService) {
       var _this = this;
       var cacheDataFirstOnly = false;
       _this.cacheData = {};
@@ -108,10 +108,15 @@
       }
 
       function mainRequest(typeRequest, options, successCallback) {
-        $http[typeRequest].apply(this, options).then(successCallback).catch(errorCallback);
+        mainOtherService.loader.show();
+        $http[typeRequest].apply(this, options).then(function (response) {
+          mainOtherService.loader.hide();
+          successCallback(response);
+        }).catch(errorCallback);
       }      
 
       function errorCallback(error) {
+          mainOtherService.loader.hide();
           if (error.data) {
               popupsService.messages('error', error.data.message ? error : {
                 data: { message: 'status: ' + error.data.statusCode + ', message: ' + error.data.error }

@@ -1,7 +1,7 @@
 
 <header-top></header-top>
 
-<article>
+<article ng-class="{'loader-gif': $ctrl.loaderCheck()}">
     <h4 data-ng-if="!$ctrl.items && !$ctrl.items.length">The list is empty! You must registration and you will have header.</h4>
     <button ng-if="$ctrl.Authorization()" type="button" class="btn btn-primary" ng-click="$ctrl.findMe()">Find me</button>
     <ol>

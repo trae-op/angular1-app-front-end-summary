@@ -9,6 +9,23 @@ body {
   margin-top: 70px;
 }
 
+
+
+.loader-gif:before {
+  background: url("../images/loader.gif") center no-repeat;
+  background-size: 70%;
+  content: "";
+  display: block;
+  height: 106px;
+  left: 50%;
+  margin-top: -(106/2) + px;
+  margin-left:  -(106/2) + px;
+  position: absolute;
+  top: 50%;
+  width: 106px;
+  z-index: 9999;
+}
+
 ul, ol {
   padding-left: 0;
   li {

@@ -3,7 +3,7 @@
 (function () {
     'use strict';
 
-    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, paginationService) {
+    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, mainOtherService) {
         var $ctrl = this;
 
         // This is necessary for pagination menu because 'hash' can be different
@@ -18,6 +18,10 @@
             $ctrl.items = _.reverse(response);
             $scope.prevItems = $ctrl.items;
         });
+
+        $ctrl.loaderCheck = function () {
+          return mainOtherService.loader.activateLoader;
+        };
 
         $ctrl.Authorization = function() {
             return mainAuthorizationService.checkAuthorization();

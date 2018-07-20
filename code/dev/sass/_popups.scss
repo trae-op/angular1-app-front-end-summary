@@ -1,7 +1,10 @@
 
-.modal-body,
-.modal-header {
+.modal-body {
   &.error * {
     color: red;
+  }
+
+  & > button {
+    margin-right: 5px;
   }
 }

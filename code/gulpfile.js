@@ -37,14 +37,14 @@ gulp.task('copyFaviconIcon', function() {
         .pipe(gulp.dest(destFolder));
 });
 
-gulp.task('copyImages', function() {
-    return gulp.src(devFolder + 'images/**/*')
-        .pipe(gulp.dest(destFolder + 'images'));
-});
-
 gulp.task('copyParts', function() {
     return gulp.src(devFolder + 'parts/**/*.html')
         .pipe(gulp.dest(destFolder + 'parts'));
+});
+
+gulp.task('copyImages', function() {
+  return gulp.src(devFolder + 'images/**/*')
+    .pipe(gulp.dest(destFolder + 'images'));
 });
 
 gulp.task('copyJson', function() {
@@ -115,17 +115,27 @@ gulp.task('bowerBuildJs', function() {
         .pipe(gulp.dest(devFolder + 'js/compiled/'));
 });
 
-gulp.task('scripts', function() {
+gulp.task('scripts-dev', function() {
     return gulp.src([
         devFolder + 'js/code/**/*.js'
     ])
         .pipe(ngAnnotate())
         .pipe(concat('app.js'))
-        .pipe(uglify())
         .pipe(gulp.dest(devFolder + 'js/compiled/'));
 });
 
+gulp.task('scripts-prod', function() {
+  return gulp.src([
+    devFolder + 'js/code/**/*.js'
+  ])
+    .pipe(ngAnnotate())
+    .pipe(concat('app.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(devFolder + 'js/compiled/'));
+});
+
 gulp.task('copy', [
+    'scripts-prod',
     'copyCss',
     'copyJs',
     'copyParts',
@@ -138,7 +148,7 @@ gulp.task('copy', [
 ]);
 
 gulp.task('build:dev:css', ['bowerBuildCss', 'sass']);
-gulp.task('build:dev:js', ['bowerBuildJs', 'scripts']);
+gulp.task('build:dev:js', ['bowerBuildJs', 'scripts-dev']);
 gulp.task('build:dev', ['build:dev:css', 'build:dev:js', 'fonts']);
 gulp.task('build:prod', ['copy']);
 
