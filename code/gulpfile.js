@@ -87,7 +87,8 @@ gulp.task('bowerBuildCss', function() {
     return gulp.src([
         bowerComponentsFolder + 'font-awesome/css/font-awesome.css',
         bowerComponentsFolder + 'bootstrap-css-only/css/bootstrap.min.css',
-        bowerComponentsFolder + 'bootstrap-social/bootstrap-social.css'
+        bowerComponentsFolder + 'bootstrap-social/bootstrap-social.css',
+        bowerComponentsFolder + 'angular-ui-select/dist/select.min.css'
     ])
         .pipe(concat('bower-styles.css'))
         .pipe(gulp.dest(devFolder + 'css/'));
@@ -109,7 +110,8 @@ gulp.task('bowerBuildJs', function() {
         bowerComponentsFolder + 'angular-route/angular-route.min.js',
         bowerComponentsFolder + 'ngstorage/ngStorage.min.js',
         bowerComponentsFolder + 'angular-facebook/lib/angular-facebook.js',
-        bowerComponentsFolder + 'ng-google-signin/dist/ng-google-signin.min.js'
+        bowerComponentsFolder + 'ng-google-signin/dist/ng-google-signin.min.js',
+        bowerComponentsFolder + 'angular-ui-select/dist/select.min.js'
     ])
         .pipe(concat('bower-scripts.js'))
         .pipe(gulp.dest(devFolder + 'js/compiled/'));

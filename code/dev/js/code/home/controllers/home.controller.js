@@ -35,6 +35,15 @@
         $ctrl.getUser = function() {
           return mainAuthorizationService.getUser();
         };
+
+
+      $ctrl.availableSkills = [
+        'JavaScript','Css','Html5', 'Node.js', 'Angular', 'Es6', 'TypeScript', 'MongoDB', 'Hapi.js', ''
+      ];
+
+      $ctrl.skillsSelected = [];
+
+      $ctrl.disabled = false;
        
     }
 

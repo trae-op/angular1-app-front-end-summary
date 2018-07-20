@@ -26,6 +26,7 @@
     "angular-facebook": "^0.2.3",
     "angular-sanitize": "1.4.8",
     "bootstrap-social": "5.0.0",
-    "ng-google-signin": "^0.1.0"
+    "ng-google-signin": "^0.1.0",
+    "angular-ui-select": "^0.19.8"
   }
 }

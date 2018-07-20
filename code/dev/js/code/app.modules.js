@@ -4,6 +4,7 @@
     angular.module('app', [
         'ngRoute',
         'ngSanitize',
+        'ui.select',
         'ngStorage',
         'facebook',
         'google-signin',

@@ -25,6 +25,15 @@
                    type="checkbox"
                    ng-model="field.checked"/>
 
+            <ui-select data-ng-if="field.type === 'multiple-selection'"
+                       multiple ng-model="field.text" theme="bootstrap" close-on-select="false" title="Choose a skills"
+                       ng-required="field.required || false">
+                <ui-select-match placeholder="{{field.placeholder}}">{{$item}}</ui-select-match>
+                <ui-select-choices repeat="skill in field.availableSkills | filter:$select.search">
+                    {{skill}}
+                </ui-select-choices>
+            </ui-select>
+
         </div>
 
     </form>

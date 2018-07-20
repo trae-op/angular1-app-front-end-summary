@@ -12,7 +12,8 @@
 
         return {
           position: getProp('position').text,
-          age: getProp('age').text
+          age: getProp('age').text,
+          skills: getProp('multiple_selection').text
         };
       };
 

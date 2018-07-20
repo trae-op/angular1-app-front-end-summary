@@ -8,9 +8,9 @@
       _this.defaultHeader = function (name, email) {
           return {
             name: name,
-            position: 'Position name',
-            age: '<your age>',
-            skills: '<need your real skills (for example: css, html etc.)>',
+            position: '<Your position>',
+            age: '<Your age>',
+            skills: '<Need your real skills (for example: css, html etc.)>',
             creator_email: email
           };
       };
