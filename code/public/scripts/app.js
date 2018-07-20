@@ -9529,20 +9529,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 })();
 
 
-(function () {
-    'use strict';
-
-    homeService.$inject = ["$http", "$log", "$routeParams"];
-    function homeService ($http, $log, $routeParams) {
-      var _this = this;
-    }
-
-    angular
-        .module('home')
-        .service('homeService', homeService);
-
-})();
-
 
 (function () {
     'use strict';
@@ -9642,6 +9628,32 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 
 })();
 
+
+(function () {
+    'use strict';
+
+    homeService.$inject = ["$http", "$log", "$routeParams"];
+    function homeService ($http, $log, $routeParams) {
+      var _this = this;
+    }
+
+    angular
+        .module('home')
+        .service('homeService', homeService);
+
+})();
+(function() {
+  
+  'use strict';
+
+  angular.module('page')
+    .filter('htmlCode', ["$sce", function($sce) {
+      return function(text) {
+        return $sce.trustAsHtml(text);
+      };
+  }]);
+  
+})();
 
 
 (function() {
@@ -9755,18 +9767,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 })();
 
 
-(function() {
-  
-  'use strict';
-
-  angular.module('page')
-    .filter('htmlCode', ["$sce", function($sce) {
-      return function(text) {
-        return $sce.trustAsHtml(text);
-      };
-  }]);
-  
-})();
 
 (function () {
     'use strict';
