@@ -17,7 +17,6 @@
             return {
               title: getProp('title').text,
               link: getProp('link').text,
-              image: getProp('image').text,
               description: getProp('description').text,
               creator_email: _this.creatorEmail
             };
@@ -32,7 +31,6 @@
               return {
                 title: getProp('title').text,
                 link: getProp('link').text,
-                image: getProp('image').text,
                 description: getProp('description').text,
                 css: getProp('css').text,
                 html: getProp('html').text,
@@ -66,12 +64,6 @@
                 required: true
             },
             {
-                type: 'text',
-                placeholder: 'image',
-                text: checkData('image'),
-                required: true
-            },
-            {
                 type: 'textarea',
                 placeholder: 'description',
                 text: checkData('description'),
@@ -85,12 +77,6 @@
                       type: 'text',
                       placeholder: 'title',
                       text: checkData('title'),
-                      required: true
-                  },
-                  {
-                      type: 'text',
-                      placeholder: 'image',
-                      text: checkData('image'),
                       required: true
                   },
                   {

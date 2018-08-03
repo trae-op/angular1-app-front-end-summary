@@ -9529,6 +9529,20 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 })();
 
 
+(function () {
+    'use strict';
+
+    homeService.$inject = ["$http", "$log", "$routeParams"];
+    function homeService ($http, $log, $routeParams) {
+      var _this = this;
+    }
+
+    angular
+        .module('home')
+        .service('homeService', homeService);
+
+})();
+
 
 (function () {
     'use strict';
@@ -9628,32 +9642,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 
 })();
 
-
-(function () {
-    'use strict';
-
-    homeService.$inject = ["$http", "$log", "$routeParams"];
-    function homeService ($http, $log, $routeParams) {
-      var _this = this;
-    }
-
-    angular
-        .module('home')
-        .service('homeService', homeService);
-
-})();
-(function() {
-  
-  'use strict';
-
-  angular.module('page')
-    .filter('htmlCode', ["$sce", function($sce) {
-      return function(text) {
-        return $sce.trustAsHtml(text);
-      };
-  }]);
-  
-})();
 
 
 (function() {
@@ -9767,6 +9755,18 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 })();
 
 
+(function() {
+  
+  'use strict';
+
+  angular.module('page')
+    .filter('htmlCode', ["$sce", function($sce) {
+      return function(text) {
+        return $sce.trustAsHtml(text);
+      };
+  }]);
+  
+})();
 
 (function () {
     'use strict';
@@ -9787,7 +9787,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
             return {
               title: getProp('title').text,
               link: getProp('link').text,
-              image: getProp('image').text,
               description: getProp('description').text,
               creator_email: _this.creatorEmail
             };
@@ -9802,7 +9801,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
               return {
                 title: getProp('title').text,
                 link: getProp('link').text,
-                image: getProp('image').text,
                 description: getProp('description').text,
                 css: getProp('css').text,
                 html: getProp('html').text,
@@ -9836,12 +9834,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
                 required: true
             },
             {
-                type: 'text',
-                placeholder: 'image',
-                text: checkData('image'),
-                required: true
-            },
-            {
                 type: 'textarea',
                 placeholder: 'description',
                 text: checkData('description'),
@@ -9855,12 +9847,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
                       type: 'text',
                       placeholder: 'title',
                       text: checkData('title'),
-                      required: true
-                  },
-                  {
-                      type: 'text',
-                      placeholder: 'image',
-                      text: checkData('image'),
                       required: true
                   },
                   {
