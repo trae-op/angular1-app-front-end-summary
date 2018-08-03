@@ -4,7 +4,7 @@
 <article ng-class="{'loader-gif': $ctrl.loaderCheck()}">
     <h1 ng-bind="$ctrl.routeParams.pageName === 'abouts' ? $ctrl.changeTitle().cutLastSymbol() : $ctrl.changeTitle().allSymbols()"></h1>
     <button ng-if="$ctrl.Authorization() && $ctrl.getUser().email === $ctrl.getCreatorEmailByHeader()" class="btn btn-primary" type="button" ng-click="$ctrl.add()" ng-bind="$ctrl.routeParams.pageName === 'abouts' ? 'Create' : 'Add'"></button>
-    <h4 data-ng-if="!$ctrl.items && !$ctrl.items.length">You should sign up or log in to your account and create the necessary info.</h4>
+    <h4 data-ng-if="!$ctrl.items && !$ctrl.items.length" ng-bind="'You should ' + ($ctrl.Authorization() && $ctrl.getUser().email === $ctrl.getCreatorEmailByHeader() ? '' : 'sign up or log in to your account and') + ' create the necessary info.'"></h4>
     <ol>
       <li data-ng-repeat="item in $ctrl.items">
         <h3>
