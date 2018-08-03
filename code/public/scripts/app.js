@@ -9496,7 +9496,7 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
         });
 
         $ctrl.availableityItems = function () {
-          return $ctrl.items.length ? true : false;
+          return $ctrl.items && $ctrl.items.length ? true : false;
         };
 
         $ctrl.loaderCheck = function () {
@@ -9569,7 +9569,7 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
         });
 
       $ctrl.availableityItems = function () {
-        return $ctrl.items.length ? true : false;
+        return $ctrl.items && $ctrl.items.length ? true : false;
       };
 
         $ctrl.loaderCheck = function () {
