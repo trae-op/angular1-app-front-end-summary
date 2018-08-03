@@ -8,7 +8,7 @@
 
         $ctrl.routeParams = $routeParams;
 
-        // This need for pagination menu becowse 'hash' can be diffarent
+        // This need for pagination menu because 'hash' can be different
         $scope.getHash = '#/page/' + $ctrl.routeParams.id + '/' + $ctrl.routeParams.pageName;
 
         mainHttpService.getById('headers', $ctrl.routeParams.id, function(responseHeader) {
@@ -18,6 +18,10 @@
               $scope.prevItems = $ctrl.items;
           });
         });
+
+      $ctrl.availableityItems = function () {
+        return $ctrl.items.length ? true : false;
+      };
 
         $ctrl.loaderCheck = function () {
           return mainOtherService.loader.activateLoader;

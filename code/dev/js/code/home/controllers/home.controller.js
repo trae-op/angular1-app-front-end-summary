@@ -19,6 +19,10 @@
             $scope.prevItems = $ctrl.items;
         });
 
+        $ctrl.availableityItems = function () {
+          return $ctrl.items.length ? true : false;
+        };
+
         $ctrl.loaderCheck = function () {
           return mainOtherService.loader.activateLoader;
         };

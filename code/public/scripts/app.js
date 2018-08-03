@@ -9014,34 +9014,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 (function () {
     'use strict';
 
-    angular.module('page', [
-        'ngRoute'
-    ]);
-
-})();
-
-(function () {
-
-    'use strict';
-
-    pageRoute.$inject = ["$routeProvider"];
-    function pageRoute($routeProvider) {
-        $routeProvider
-            .when("/page/:id/:pageName/:pageNumber", {
-                templateUrl : "parts/page/page.html",
-                controller: "pageController",
-                controllerAs: '$ctrl'
-            });
-    }
-
-    angular.module('page')
-        .config(pageRoute);
-
-})();
-
-(function () {
-    'use strict';
-
     angular.module('home', [
         'ngRoute'
     ]);
@@ -9064,6 +9036,34 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 
     angular.module('home')
         .config(homeRoute);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('page', [
+        'ngRoute'
+    ]);
+
+})();
+
+(function () {
+
+    'use strict';
+
+    pageRoute.$inject = ["$routeProvider"];
+    function pageRoute($routeProvider) {
+        $routeProvider
+            .when("/page/:id/:pageName/:pageNumber", {
+                templateUrl : "parts/page/page.html",
+                controller: "pageController",
+                controllerAs: '$ctrl'
+            });
+    }
+
+    angular.module('page')
+        .config(pageRoute);
 
 })();
 
@@ -9478,13 +9478,86 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 (function () {
     'use strict';
 
+    homeController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "popupsService", "homeService", "mainAuthorizationService", "mainOtherService"];
+    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, mainOtherService) {
+        var $ctrl = this;
+
+        // This is necessary for pagination menu because 'hash' can be different
+        $scope.getHash = '#';
+
+      $ctrl.items = [];
+
+        // for the correct "reverse"
+        mainHttpService.cacheData = {};
+
+        mainHttpService.get('headers', function (response) {
+            $ctrl.items = _.reverse(response);
+            $scope.prevItems = $ctrl.items;
+        });
+
+        $ctrl.availableityItems = function () {
+          return $ctrl.items.length ? true : false;
+        };
+
+        $ctrl.loaderCheck = function () {
+          return mainOtherService.loader.activateLoader;
+        };
+
+        $ctrl.Authorization = function() {
+            return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.findMe = function() {
+          $ctrl.items = [_.find(mainHttpService.cacheData.headers, { 'creator_email': $ctrl.getUser().email })];
+          $scope.prevItems = $ctrl.items;
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+
+
+      $ctrl.availableSkills = [
+        'JavaScript','Css','Html5', 'Node.js', 'Angular', 'Es6', 'TypeScript', 'MongoDB', 'Hapi.js', ''
+      ];
+
+      $ctrl.skillsSelected = [];
+
+      $ctrl.disabled = false;
+       
+    }
+
+    angular.module('home')
+        .controller('homeController', homeController);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    homeService.$inject = ["$http", "$log", "$routeParams"];
+    function homeService ($http, $log, $routeParams) {
+      var _this = this;
+    }
+
+    angular
+        .module('home')
+        .service('homeService', homeService);
+
+})();
+
+
+(function () {
+    'use strict';
+
     pageController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "popupsService", "pageService", "paginationService", "mainAuthorizationService", "mainOtherService"];
     function pageController($scope, $routeParams, $log, mainHttpService, popupsService, pageService, paginationService, mainAuthorizationService, mainOtherService) {
         var $ctrl = this;
 
         $ctrl.routeParams = $routeParams;
 
-        // This need for pagination menu becowse 'hash' can be diffarent
+        // This need for pagination menu because 'hash' can be different
         $scope.getHash = '#/page/' + $ctrl.routeParams.id + '/' + $ctrl.routeParams.pageName;
 
         mainHttpService.getById('headers', $ctrl.routeParams.id, function(responseHeader) {
@@ -9494,6 +9567,10 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
               $scope.prevItems = $ctrl.items;
           });
         });
+
+      $ctrl.availableityItems = function () {
+        return $ctrl.items.length ? true : false;
+      };
 
         $ctrl.loaderCheck = function () {
           return mainOtherService.loader.activateLoader;
@@ -9858,75 +9935,6 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
     angular
         .module('page')
         .service('pageService', pageService);
-
-})();
-
-
-(function () {
-    'use strict';
-
-    homeController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "popupsService", "homeService", "mainAuthorizationService", "mainOtherService"];
-    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, mainOtherService) {
-        var $ctrl = this;
-
-        // This is necessary for pagination menu because 'hash' can be different
-        $scope.getHash = '#';
-
-      $ctrl.items = [];
-
-        // for the correct "reverse"
-        mainHttpService.cacheData = {};
-
-        mainHttpService.get('headers', function (response) {
-            $ctrl.items = _.reverse(response);
-            $scope.prevItems = $ctrl.items;
-        });
-
-        $ctrl.loaderCheck = function () {
-          return mainOtherService.loader.activateLoader;
-        };
-
-        $ctrl.Authorization = function() {
-            return mainAuthorizationService.checkAuthorization();
-        };
-
-        $ctrl.findMe = function() {
-          $ctrl.items = [_.find(mainHttpService.cacheData.headers, { 'creator_email': $ctrl.getUser().email })];
-          $scope.prevItems = $ctrl.items;
-        };
-
-        $ctrl.getUser = function() {
-          return mainAuthorizationService.getUser();
-        };
-
-
-      $ctrl.availableSkills = [
-        'JavaScript','Css','Html5', 'Node.js', 'Angular', 'Es6', 'TypeScript', 'MongoDB', 'Hapi.js', ''
-      ];
-
-      $ctrl.skillsSelected = [];
-
-      $ctrl.disabled = false;
-       
-    }
-
-    angular.module('home')
-        .controller('homeController', homeController);
-
-})();
-
-
-(function () {
-    'use strict';
-
-    homeService.$inject = ["$http", "$log", "$routeParams"];
-    function homeService ($http, $log, $routeParams) {
-      var _this = this;
-    }
-
-    angular
-        .module('home')
-        .service('homeService', homeService);
 
 })();
 
