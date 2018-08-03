@@ -9,8 +9,9 @@
       <li data-ng-repeat="item in $ctrl.items">
         <h3>
           <a ng-attr-target="{{$ctrl.routeParams.pageName === 'companies' || $ctrl.routeParams.pageName === 'projects' ? '_blank' : '_self'}}" ng-if="$ctrl.routeParams.pageName !== 'scripts'" ng-href="{{item.link}}" ng-bind="item.title"></a>
-          <span ng-if="$ctrl.routeParams.pageName === 'scripts'" ng-bind="item.title"></span>
+            <span ng-if="$ctrl.routeParams.pageName === 'scripts'" ng-bind="item.title"></span>
         </h3>
+          <span><strong>Created:</strong> <i ng-bind="item.created_at"></i></span>
         
         <p ng-bind="item.description"></p>
         <button ng-if="$ctrl.routeParams.pageName === 'scripts'" class="btn btn-primary" type="button" ng-click="$ctrl.loadScript(item)">Load Script</button>

@@ -40,14 +40,69 @@
           return mainAuthorizationService.getUser();
         };
 
+      // Remove User Completely
+      $ctrl.removeCompletely = function (header) {
+        var dataAvailability = [];
+        var message = function (value) {
+          if (value) {
+            popupsService.messages('Message', {
+              data: {
+                message: 'User deleted!!!'
+              }
+            });
+          } else {
+            popupsService.messages('Message', {
+              data: {
+                message: 'You can\'t delete a user because the following data is available: "' + dataAvailability.join(', ') +
+                '". At first you should be removed the available data then to retry delete user.'
+              }
+            });
+          }
+        };
+        mainHttpService.get('companies', function (companiesResponse) {
+          if (_.filter(companiesResponse, {creator_email: header.creator_email}).length) {
+            dataAvailability.push('companies');
+          }
+          mainHttpService.get('projects', function (projectsResponse) {
 
-      $ctrl.availableSkills = [
-        'JavaScript','Css','Html5', 'Node.js', 'Angular', 'Es6', 'TypeScript', 'MongoDB', 'Hapi.js', ''
-      ];
+            if (_.filter(projectsResponse, {creator_email: header.creator_email}).length) {
+              dataAvailability.push('projects');
+            }
 
-      $ctrl.skillsSelected = [];
+            mainHttpService.get('scripts', function (scriptsResponse) {
+              if (_.filter(scriptsResponse, {creator_email: header.creator_email}).length) {
+                dataAvailability.push('scripts');
+              }
 
-      $ctrl.disabled = false;
+              mainHttpService.get('abouts', function (aboutsResponse) {
+                if (_.filter(aboutsResponse, {creator_email: header.creator_email}).length) {
+                  dataAvailability.push('abouts');
+                }
+
+                if (dataAvailability.length) {
+                  message();
+                } else {
+                  mainHttpService.deleteById('headers', header._id, function() {
+                    mainHttpService.getByEmail('users', header.creator_email, function (userFound) {
+                      if (userFound.length) {
+                        mainHttpService.deleteById('users', userFound[0]._id, function() {
+                          message(true);
+                        });
+                      } else {
+                        message(true);
+                      }
+                    });
+
+                  });
+                }
+
+              });
+            });
+          });
+        });
+
+      };
+
        
     }
 

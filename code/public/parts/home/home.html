@@ -15,6 +15,7 @@
                 <strong ng-bind="header.name"></strong> - <span ng-bind="header.age + ' years old'"></span>
             </h4>
             <p><strong>Created: </strong><span ng-bind="header.created_at"></span></p>
+            <button ng-if="$ctrl.Authorization() && $ctrl.getUser().role === 'Admin'" class="btn btn-danger" type="button" ng-click="$ctrl.removeCompletely(header, $index)">Delete</button>
         </li>
     </ol>
 

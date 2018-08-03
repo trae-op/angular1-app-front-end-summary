@@ -91,7 +91,7 @@
 
       _this.getByEmail = function (nameRequest, email, successCallback) {
         _this.get(nameRequest, function (response) {
-          successCallback(findByValue(email, 'creator_email', response));
+          successCallback(findByValue(email, (nameRequest === 'users' ? 'email' : 'creator_email'), response));
         });        
       };
 
