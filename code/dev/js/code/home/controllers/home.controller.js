@@ -10,18 +10,23 @@
         $scope.getHash = '#';
 
       $ctrl.items = [];
+      $ctrl.showMessage = false;
 
         // for the correct "reverse"
         mainHttpService.cacheData = {};
 
-        mainHttpService.get('headers', function (response) {
-            $ctrl.items = _.reverse(response);
-            $scope.prevItems = $ctrl.items;
-        });
-
         $ctrl.availableityItems = function () {
           return $ctrl.items && $ctrl.items.length ? true : false;
         };
+
+        mainHttpService.get('headers', function (response) {
+            $ctrl.items = _.reverse(response);
+            $scope.prevItems = $ctrl.items;
+
+            if (!$ctrl.availableityItems()) {
+              $ctrl.showMessage = true;
+            }
+        });
 
         $ctrl.loaderCheck = function () {
           return mainOtherService.loader.activateLoader;

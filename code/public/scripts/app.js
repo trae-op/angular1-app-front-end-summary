@@ -9486,18 +9486,23 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
         $scope.getHash = '#';
 
       $ctrl.items = [];
+      $ctrl.showMessage = false;
 
         // for the correct "reverse"
         mainHttpService.cacheData = {};
 
-        mainHttpService.get('headers', function (response) {
-            $ctrl.items = _.reverse(response);
-            $scope.prevItems = $ctrl.items;
-        });
-
         $ctrl.availableityItems = function () {
           return $ctrl.items && $ctrl.items.length ? true : false;
         };
+
+        mainHttpService.get('headers', function (response) {
+            $ctrl.items = _.reverse(response);
+            $scope.prevItems = $ctrl.items;
+
+            if (!$ctrl.availableityItems()) {
+              $ctrl.showMessage = true;
+            }
+        });
 
         $ctrl.loaderCheck = function () {
           return mainOtherService.loader.activateLoader;
@@ -9612,20 +9617,28 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 
         $ctrl.routeParams = $routeParams;
 
+        $ctrl.showMessage = false;
+
+        $ctrl.items = [];
+
         // This need for pagination menu because 'hash' can be different
         $scope.getHash = '#/page/' + $ctrl.routeParams.id + '/' + $ctrl.routeParams.pageName;
+
+        $ctrl.availableityItems = function () {
+          return $ctrl.items && $ctrl.items.length ? true : false;
+        };
 
         mainHttpService.getById('headers', $ctrl.routeParams.id, function(responseHeader) {
           pageService.creatorEmail = responseHeader[0].creator_email;
           mainHttpService.getByEmail($ctrl.routeParams.pageName, responseHeader[0].creator_email, function(responsePage) {
               $ctrl.items = _.reverse(responsePage);
               $scope.prevItems = $ctrl.items;
+
+              if (!$ctrl.availableityItems()) {
+                $ctrl.showMessage = true;
+              }
           });
         });
-
-      $ctrl.availableityItems = function () {
-        return $ctrl.items && $ctrl.items.length ? true : false;
-      };
 
         $ctrl.loaderCheck = function () {
           return mainOtherService.loader.activateLoader;

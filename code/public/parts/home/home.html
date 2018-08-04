@@ -2,7 +2,7 @@
 <header-top></header-top>
 
 <article ng-class="{'loader-gif': $ctrl.loaderCheck()}">
-    <h4 data-ng-if="!$ctrl.availableityItems()">The list is empty! You should sign up and you'll have header.</h4>
+    <h4 data-ng-if="$ctrl.showMessage">The list is empty! You should sign up and you'll have header.</h4>
     <button ng-if="$ctrl.Authorization()" type="button" class="btn btn-primary" ng-click="$ctrl.findMe()">Find me</button>
     <ol>
         <li data-ng-repeat="header in $ctrl.items">
