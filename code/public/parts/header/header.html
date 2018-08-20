@@ -35,11 +35,11 @@
                                 <li role="menuitem"><a href="" ng-bind="getUser().name"></a></li>
                                 <li role="menuitem"><a href="" ng-bind="getUser().email"></a></li>
                                 <li class="divider"></li>
-                                <li role="menuitem"><a href="" ng-click="logout()">Sign Up</a></li>
+                                <li role="menuitem"><a href="" ng-click="logout()">logout</a></li>
                             </ul>
                     </li>
                     <li ng-if="!authorization()"><a href="" ng-click="open()"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                    <li ng-if="!authorization()"><a href="" ng-click="registration()"><span class="glyphicon glyphicon-registration-mark"></span> Ragister</a></li>
+                    <li ng-if="!authorization()"><a href="" ng-click="registration()"><span class="glyphicon glyphicon-registration-mark"></span> Sign Up</a></li>
                 </ul>
             </div>
         </div>
