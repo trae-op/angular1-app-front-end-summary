@@ -9070,17 +9070,17 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
 (function () {
     'use strict';
 
-    angular.module('shared', [
-        'ngRoute',
-        'ui.bootstrap'
-    ]);
+    angular.module('users', []);
 
 })();
 
 (function () {
     'use strict';
 
-    angular.module('users', []);
+    angular.module('shared', [
+        'ngRoute',
+        'ui.bootstrap'
+    ]);
 
 })();
 
@@ -9668,6 +9668,7 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
               mainHttpService.add($ctrl.routeParams.pageName, pageService.filledData(data), function(response) {
                   $ctrl.items.unshift(response);
                   $scope.prevItems.unshift(response);
+                  $ctrl.showMessage = false;
               });
           });
         };
@@ -9689,6 +9690,9 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
           mainHttpService.deleteById($ctrl.routeParams.pageName, id, function(response) {
               $ctrl.items.splice(index, 1);
               $scope.prevItems.splice(index, 1);
+              if (!$ctrl.availableityItems()) {
+                $ctrl.showMessage = true;
+              }
           });
         };
 
@@ -9876,7 +9880,7 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
             case 'scripts':
               return {
                 title: getProp('title').text,
-                link: getProp('link').text,
+                link: getProp('scripts').text,
                 description: getProp('description').text,
                 css: getProp('css').text,
                 html: getProp('html').text,
@@ -9939,7 +9943,7 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
                   },
                   {
                       type: 'textarea',
-                      placeholder: 'link',
+                      placeholder: 'scripts',
                       text: checkData('link'),
                       required: true
                   },
@@ -10003,6 +10007,20 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
     angular
         .module('page')
         .service('pageService', pageService);
+
+})();
+
+(function () {
+    'use strict';
+
+    usersService.$inject = ["$log"];
+    function usersService($log) {
+
+    }
+
+    angular
+        .module('users')
+        .service('usersService', usersService);
 
 })();
 
@@ -10434,19 +10452,5 @@ angular.module("google-signin",[]).provider("GoogleSignin",[function(){var a={};
     angular
         .module('shared')
         .service('popupsService', popupsService);
-
-})();
-
-(function () {
-    'use strict';
-
-    usersService.$inject = ["$log"];
-    function usersService($log) {
-
-    }
-
-    angular
-        .module('users')
-        .service('usersService', usersService);
 
 })();
