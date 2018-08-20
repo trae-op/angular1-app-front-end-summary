@@ -59,7 +59,7 @@
             popupsService.messages('Message', {
               data: {
                 message: 'You can\'t delete a user because the following data is available: "' + dataAvailability.join(', ') +
-                '". At first you should be removed the available data then to retry delete user.'
+                '". At first you should be remove the available data then to retry delete user.'
               }
             });
           }
