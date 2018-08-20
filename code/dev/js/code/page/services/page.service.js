@@ -30,7 +30,7 @@
             case 'scripts':
               return {
                 title: getProp('title').text,
-                link: getProp('link').text,
+                link: getProp('scripts').text,
                 description: getProp('description').text,
                 css: getProp('css').text,
                 html: getProp('html').text,
@@ -93,7 +93,7 @@
                   },
                   {
                       type: 'textarea',
-                      placeholder: 'link',
+                      placeholder: 'scripts',
                       text: checkData('link'),
                       required: true
                   },

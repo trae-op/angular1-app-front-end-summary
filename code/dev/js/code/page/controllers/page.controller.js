@@ -59,6 +59,7 @@
               mainHttpService.add($ctrl.routeParams.pageName, pageService.filledData(data), function(response) {
                   $ctrl.items.unshift(response);
                   $scope.prevItems.unshift(response);
+                  $ctrl.showMessage = false;
               });
           });
         };
@@ -80,6 +81,9 @@
           mainHttpService.deleteById($ctrl.routeParams.pageName, id, function(response) {
               $ctrl.items.splice(index, 1);
               $scope.prevItems.splice(index, 1);
+              if (!$ctrl.availableityItems()) {
+                $ctrl.showMessage = true;
+              }
           });
         };
 

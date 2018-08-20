@@ -1,1 +1,1580 @@
-!function(){"use strict";function e(e,t,a,r){r.checkAuthorization()&&(e.defaults.headers.common.Authorization=a.Authorization)}e.$inject=["$http","$log","$localStorage","mainAuthorizationService"],angular.module("app",["ngRoute","ngSanitize","ui.select","ngStorage","facebook","google-signin","activation","header","home","front","page","shared"]).run(e)}(),function(){"use strict";function e(e,t,a){t.init("184315939079210"),a.init({client_id:"607355219083-p7ven3qhii2kijmd1utei3h260ph8dk7.apps.googleusercontent.com"}),e.otherwise({redirectTo:"/1"})}e.$inject=["$routeProvider","FacebookProvider","GoogleSigninProvider"],angular.module("app").config(e)}(),function(){"use strict";angular.module("activation",["ngRoute"])}(),function(){"use strict";function e(e){e.when("/account_activation",{templateUrl:"parts/activation-user/activation.user.html",controller:"activationUserController",controllerAs:"$ctrl"})}e.$inject=["$routeProvider"],angular.module("activation").config(e)}(),function(){"use strict";angular.module("front",["ngRoute"])}(),function(){"use strict";function e(e){e.when("/resume/:id",{templateUrl:"parts/front/front.html",controller:"frontController",controllerAs:"$ctrl"})}e.$inject=["$routeProvider"],angular.module("front").config(e)}(),function(){"use strict";angular.module("header",[])}(),function(){"use strict";angular.module("page",["ngRoute"])}(),function(){"use strict";function e(e){e.when("/page/:id/:pageName/:pageNumber",{templateUrl:"parts/page/page.html",controller:"pageController",controllerAs:"$ctrl"})}e.$inject=["$routeProvider"],angular.module("page").config(e)}(),function(){"use strict";angular.module("home",["ngRoute"])}(),function(){"use strict";function e(e){e.when("/:pageNumber",{templateUrl:"parts/home/home.html",controller:"homeController",controllerAs:"$ctrl"})}e.$inject=["$routeProvider"],angular.module("home").config(e)}(),function(){"use strict";angular.module("shared",["ngRoute","ui.bootstrap"])}(),function(){"use strict";angular.module("users",[])}(),function(){"use strict";function e(e,t,a,r,n,i,o){function c(){return i.getUser()}var s=this;if(n.temporaryDataUser){var u={name:n.temporaryDataUser.name,email:n.temporaryDataUser.email,password:n.temporaryDataUser.password,uuid:n.temporaryDataUser.uuid,hash:n.temporaryDataUser.hash},l={email:n.temporaryDataUser.email,password:n.temporaryDataUser.password,rememberMe:!0};r.accountActivationUser("activation",u,function(e){n.temporaryDataUser=!1,r.login("users/login",l,function(e){r.add("headers",o.defaultHeader(c().name,c().email),function(e){t.info("$localStorage",n),s.message="Your account successfully activated!!!"})})})}}e.$inject=["$scope","$log","$routeParams","mainHttpService","$localStorage","mainAuthorizationService","headersService"],angular.module("activation").controller("activationUserController",e)}(),function(){"use strict";function e(e,t,a,r,n,i,o,c){var s=this;s.routeParams=t,r.getById("headers",s.routeParams.id,function(e){s.header=e[0]}),s.Authorization=function(){return o.checkAuthorization()},s.getUser=function(){return o.getUser()},s.loaderCheck=function(){return c.loader.activateLoader},s.update=function(){i.forms({title:"Update",fields:[{type:"text",placeholder:"position",name:"position",text:s.header.position,required:!0},{type:"text",placeholder:"age",name:"age",text:s.header.age,required:!0},{type:"multiple-selection",placeholder:"Select skill...",name:"multiple_selection",text:s.header.skills,availableSkills:["JavaScript","Css","Html5","Node.js","Angular","Es6","TypeScript","MongoDB","Hapi.js"],required:!0}]},function(e){var t=n.filledData(e);t.name=s.getUser().name,t._id=s.header._id,t.creator_email=s.header.creator_email,r.update("headers",t,function(e){s.header=e})})}}e.$inject=["$scope","$routeParams","$log","mainHttpService","frontService","popupsService","mainAuthorizationService","mainOtherService"],angular.module("front").controller("frontController",e)}(),function(){"use strict";function e(e){var t=this;t.filledData=function(e){var t=function(t){return _.find(e,{name:t})};return{position:t("position").text,age:t("age").text,skills:t("multiple_selection").text}}}e.$inject=["$log"],angular.module("front").service("frontService",e)}(),function(){"use strict";function e(e,t,a,r,n,i,o,c){return{restrict:"EA",templateUrl:window.ORIGIN_PATH+"parts/header/header.html",link:function(e,t,a){function r(t,a){i.getByEmail("headers",t.email,function(r){t.rememberMe=!0,i.login("users/login",t,function(t){a.cancel(),r.length<=0?i.add("headers",c.defaultHeader(e.getUser().name,e.getUser().email),function(t){e.openTopMenu=!1,window.location.hash="resume/"+t._id}):(e.openTopMenu=!1,window.location.hash="resume/"+r[0]._id)})})}function s(e){o.authFacebook(function(t){r(t,e)})}function u(e){o.authGoogle(function(t){r({name:t.w3.ig,email:t.w3.U3},e)})}var l=function(e,t){return _.find(e,{name:t})};e.originPath=function(){return window.ORIGIN_PATH},e.logout=function(){i.logout()},e.getUser=function(){return o.getUser()},e.showTopMenu=function(){e.openTopMenu?e.openTopMenu=!1:e.openTopMenu=!0},e.authorization=function(){return o.checkAuthorization()},e.open=function(){n.forms({title:"Log In",fields:[{type:"email",placeholder:"email",text:"",name:"email",required:!0},{type:"password",placeholder:"password",text:"",name:"password",required:!0},{type:"checkbox",placeholder:"Remember me",name:"rememberMe",checked:!1}],additionalButtons:[{text:"Facebook",handler:s},{text:"Google",handler:u}]},function(t){var a={email:l(t,"email").text,password:l(t,"password").text,rememberMe:l(t,"rememberMe").checked};i.login("users/login",a,function(t){e.openTopMenu=!1})})},e.registration=function(){n.forms({title:"Registration",fields:[{type:"text",placeholder:"name",text:"",name:"name",required:!0},{type:"email",placeholder:"email",text:"",name:"email",required:!0},{type:"password",placeholder:"password",text:"",name:"password",required:!0},{type:"password",placeholder:"confirm password",text:"",name:"confirm_password",required:!0}]},function(t){var a={name:l(t,"name").text,email:l(t,"email").text,password:l(t,"password").text},r={email:l(t,"email").text,password:l(t,"password").text,rememberMe:!0};i.add("users",a,function(t){i.login("users/login",r,function(t){i.add("headers",c.defaultHeader(a.name,a.email),function(t){e.openTopMenu=!1,window.location.hash="resume/"+t._id})})})})}}}}e.$inject=["$log","$uibModal","$routeParams","$localStorage","popupsService","mainHttpService","mainAuthorizationService","headersService"],angular.module("header").directive("headerTop",e)}(),function(){"use strict";function e(e,t){var a=this;a.defaultHeader=function(e,t){return{name:e,position:"<Your position>",age:"<Your age>",skills:"<Need your real skills (for example: css, html etc.)>",creator_email:t}}}e.$inject=["$http","$log"],angular.module("header").service("headersService",e)}(),function(){"use strict";function e(e,t,a,r,n,i,o,c,s){var u=this;u.routeParams=t,u.showMessage=!1,u.items=[],e.getHash="#/page/"+u.routeParams.id+"/"+u.routeParams.pageName,u.availableityItems=function(){return!(!u.items||!u.items.length)},r.getById("headers",u.routeParams.id,function(t){i.creatorEmail=t[0].creator_email,r.getByEmail(u.routeParams.pageName,t[0].creator_email,function(t){u.items=_.reverse(t),e.prevItems=u.items,u.availableityItems()||(u.showMessage=!0)})}),u.loaderCheck=function(){return s.loader.activateLoader},u.getCreatorEmailByHeader=function(){return i.creatorEmail},u.Authorization=function(){return c.checkAuthorization()},u.getUser=function(){return c.getUser()},u.add=function(){u.items||(u.items=[]),n.forms({title:"abouts"!==u.routeParams.pageName?"Add":"Create",fields:i.getFields()},function(t){r.add(u.routeParams.pageName,i.filledData(t),function(t){u.items.unshift(t),e.prevItems.unshift(t)})})},u.update=function(e,t){n.forms({title:"Update",fields:i.getFields(e)},function(a){var n=i.filledData(a);n._id=e._id,r.update(u.routeParams.pageName,n,function(e){u.items[t]=e})})},u["delete"]=function(t,a){r.deleteById(u.routeParams.pageName,t,function(t){u.items.splice(a,1),e.prevItems.splice(a,1)})},u.changeTitle=function(){return{allSymbols:function(){return _.capitalize(u.routeParams.pageName)},cutLastSymbol:function(){return this.allSymbols().substr(0,this.allSymbols().length-1)}}},u.loadScript=function(e){i.loadScript({title:"Load Script",data:e})}}e.$inject=["$scope","$routeParams","$log","mainHttpService","popupsService","pageService","paginationService","mainAuthorizationService","mainOtherService"],angular.module("page").controller("pageController",e)}(),function(){"use strict";angular.module("page").directive("bindHtmlWithJs",["$sce","$parse",function(e,t){function a(e){e="<i></i>"+e;var t=angular.element(e),a=angular.element("<div></div>");if(t.length)for(var n=1,i=t.length;n<i;n++){var o=t.eq(n),c=o[0];"SCRIPT"!=c.nodeName||c.type&&"text/javascript"!=c.type?a.append(o):r(o[0])}return e=a.html()}function r(e){var t=document.createElement("script"),a=document.body,r=function(){t.onload=t.onerror=null,a.removeChild(t)};if(t.type="text/javascript",e.src)t.src=e.src,t.async=e.async,t.onload=t.onerror=function(){r()};else{try{t.appendChild(document.createTextNode(e.innerText))}catch(n){t.text=e.innerText}setTimeout(function(){r()},10)}a.appendChild(t)}return function(r,n,i){function o(){return(c(r)||"").toString()}n.addClass("ng-binding").data("$binding",i.bindHtmlWithJs);var c=t(i.bindHtmlWithJs);r.$watch(o,function(t){var i=t?e.getTrustedHtml(c(r)):"";i&&(i=a(i)),n.html(i||"")})}}])}(),function(){"use strict";angular.module("page").filter("htmlCode",["$sce",function(e){return function(t){return e.trustAsHtml(t)}}])}(),function(){"use strict";function e(e,t,a,r){var n=this;n.creatorEmail="",n.filledData=function(e){var t=function(t){return _.find(e,{placeholder:t})},r=function(){return{title:t("title").text,link:t("link").text,description:t("description").text,creator_email:n.creatorEmail}};switch(a.pageName){case"abouts":return{description:t("description").text,creator_email:n.creatorEmail};case"scripts":return{title:t("title").text,link:t("link").text,description:t("description").text,css:t("css").text,html:t("html").text,creator_email:n.creatorEmail};case"projects":return r();case"companies":return r();default:return{}}},n.getFields=function(e){var t=function(t){return e?e[t]:""},r=[{type:"text",placeholder:"title",text:t("title"),required:!0},{type:"text",placeholder:"link",text:t("link"),required:!0},{type:"textarea",placeholder:"description",text:t("description"),required:!0}];switch(a.pageName){case"scripts":return[{type:"text",placeholder:"title",text:t("title"),required:!0},{type:"textarea",placeholder:"description",text:t("description"),required:!0},{type:"textarea",placeholder:"css",text:t("css"),required:!0},{type:"textarea",placeholder:"link",text:t("link"),required:!0},{type:"textarea",placeholder:"html",text:t("html"),required:!0}];case"abouts":return[{type:"textarea",placeholder:"description",text:t("description"),required:!0}];case"projects":return r;case"companies":return r;default:return[]}},n.loadScript=function(e){r.open({ariaLabelledBy:"modal-title",ariaDescribedBy:"modal-body",templateUrl:"parts/load-script/load.script.html",controller:["$uibModalInstance","items",function(e,t){var a=this;a.title=t.title,a.script={css:t.data.css,html:t.data.html,js:t.data.link},a.close=function(){e.dismiss("close")}}],controllerAs:"$ctrl",size:"md",resolve:{items:function(){return e}}})}}e.$inject=["$http","$log","$routeParams","$uibModal"],angular.module("page").service("pageService",e)}(),function(){"use strict";function e(e,t,a,r,n,i,o,c){var s=this;e.getHash="#",s.items=[],s.showMessage=!1,r.cacheData={},s.availableityItems=function(){return!(!s.items||!s.items.length)},r.get("headers",function(t){s.items=_.reverse(t),e.prevItems=s.items,s.availableityItems()||(s.showMessage=!0)}),s.loaderCheck=function(){return c.loader.activateLoader},s.Authorization=function(){return o.checkAuthorization()},s.findMe=function(){s.items=[_.find(r.cacheData.headers,{creator_email:s.getUser().email})],e.prevItems=s.items},s.getUser=function(){return o.getUser()},s.removeCompletely=function(e){var t=[],a=function(e){e?n.messages("Message",{data:{message:"User deleted!!!"}}):n.messages("Message",{data:{message:"You can't delete a user because the following data is available: \""+t.join(", ")+'". At first you should be remove the available data then to retry delete user.'}})};r.get("companies",function(n){_.filter(n,{creator_email:e.creator_email}).length&&t.push("companies"),r.get("projects",function(n){_.filter(n,{creator_email:e.creator_email}).length&&t.push("projects"),r.get("scripts",function(n){_.filter(n,{creator_email:e.creator_email}).length&&t.push("scripts"),r.get("abouts",function(n){_.filter(n,{creator_email:e.creator_email}).length&&t.push("abouts"),t.length?a():r.deleteById("headers",e._id,function(){r.getByEmail("users",e.creator_email,function(e){e.length?r.deleteById("users",e[0]._id,function(){a(!0)}):a(!0)})})})})})})}}e.$inject=["$scope","$log","$routeParams","mainHttpService","popupsService","homeService","mainAuthorizationService","mainOtherService"],angular.module("home").controller("homeController",e)}(),function(){"use strict";function e(e,t,a){}e.$inject=["$http","$log","$routeParams"],angular.module("home").service("homeService",e)}(),function(){"use strict";function e(e,t,a,r,n){var i=this;i.firstOnlyLocalStorage={Authorization:void 0,user:void 0},i.checkRememberMe=function(e){a.checkRememberMe=e},i.checkAuthorization=function(){var e=!a.checkRememberMe,t=i.firstOnlyLocalStorage.Authorization,r=a.Authorization,n=e?t:r;return!!n},i.addAuthHeaderForAPI=function(t){a.Authorization="Bearer "+t,i.firstOnlyLocalStorage.Authorization="Bearer "+t,e.defaults.headers.common.Authorization="Bearer "+t,e.defaults.headers.common["Content-Type"]="application/json"},i.clearAuthHeaderForAPI=function(){a.Authorization=void 0,i.firstOnlyLocalStorage.Authorization=void 0,delete e.defaults.headers.common.Authorization},i.setToken=function(e){e&&(a.Authorization=e,i.firstOnlyLocalStorage.Authorization=e)},i.clearUserMyself=function(){i.firstOnlyLocalStorage.user=void 0,a.user=void 0},i.getUser=function(){return a.checkRememberMe?a.user:i.firstOnlyLocalStorage.user},i.setUserMyself=function(e){delete e.password,a.user=e,i.firstOnlyLocalStorage.user=e},i.authFacebook=function(e){r.login(function(a){"connected"==a.status?r.api("/me",{fields:"email, name"},e):t.info("Facebook. User cancelled login or did not fully authorize.")},{scope:"email"})},i.authGoogle=function(e){n.signIn().then(e,function(e){t.info("Google. User cancelled login or did not fully authorize.",e)})}}e.$inject=["$http","$log","$localStorage","Facebook","GoogleSignin"],angular.module("shared").service("mainAuthorizationService",e)}(),function(){"use strict";function e(e,t,a,r,n,i){function o(e,t){return _.findIndex(d.cacheData[e],t)}function c(e,t,a){return _.filter(a,JSON.parse('{"'+t+'":"'+e+'"}'))}function s(){return window.API_URL+"/"}function u(t,a,r){i.loader.show(),e[t].apply(this,a).then(function(e){i.loader.hide(),r(e)})["catch"](l)}function l(e){i.loader.hide(),e.data?r.messages("error",e.data.message?e:{data:{message:"status: "+e.data.statusCode+", message: "+e.data.error}}):r.messages("error",{data:{message:"status: "+e.status}})}var d=this,m=!1;d.cacheData={},d.get=function(e,t){d.cacheData[e]?t(d.cacheData[e]):u("get",[s()+e],function(a){d.cacheData[e]=a.data,t(a.data)})},d.add=function(e,t,a){u("post",[s()+e,t],function(t){"users"!==e&&d.cacheData[e]&&d.cacheData[e].push(t.data),a(t.data)})},d.authorization=function(e,t,r){a.temporaryDataUser=!1,u("post",[s()+e,t],function(e){a.temporaryDataUser=e.data,r(e.data)})},d.accountActivationUser=function(e,t,a){u("post",[s()+e,t],function(e){a(e.data)})},d.login=function(e,t,a){m&&(d.cacheData=m),n.checkRememberMe(t.rememberMe),delete t.rememberMe,u("post",[s()+e,t],function(e){n.setToken(e.data.token),n.addAuthHeaderForAPI(e.data.token),n.setUserMyself(e.data.user),a(e)})},d.logout=function(){m=d.cacheData,d.cacheData={},n.clearUserMyself(),n.setToken(),n.clearAuthHeaderForAPI()},d.update=function(e,t,a){u("put",[s()+e,t],function(t){d.cacheData[e][o(e,{_id:t.data._id})]=t.data,a(t.data)})},d.deleteById=function(e,t,a){u("delete",[s()+e+"/"+t],function(r){d.cacheData[e].splice(o(e,{_id:t}),1),a(r.data)})},d.getById=function(e,t,a){d.get(e,function(e){a(c(t,"_id",e))})},d.getByEmail=function(e,t,a){d.get(e,function(r){a(c(t,"users"===e?"email":"creator_email",r))})}}e.$inject=["$http","$log","$localStorage","popupsService","mainAuthorizationService","mainOtherService"],angular.module("shared").service("mainHttpService",e)}(),function(){"use strict";function e(e,t){var a=this;a.loader={activateLoader:!1,show:function(){a.loader.activateLoader=!0},hide:function(){a.loader.activateLoader=!1}}}e.$inject=["$http","$log"],angular.module("shared").service("mainOtherService",e)}(),function(){"use strict";function e(e,t,a,r){return{restrict:"EA",templateUrl:window.ORIGIN_PATH+"parts/pagination/pagination.html",link:function(e,r,n){e.routeParams=t;var i=Number(e.routeParams.pageNumber);e.getHash,e.$watch("prevItems",function(t){if(t){var r=a.group(t,5);e.pagination=r,e.$ctrl.items=r[Number(e.routeParams.pageNumber)-1]}},!0),e.showNumbering=function(e){var t=i===e+3,a=i===e+2,r=i===e+1,n=i===e,o=i===e-1;return t||a||r||n||o},e.showDots=function(e){return i===e+4||i===e-2},e.nextPage=function(){return Number(e.routeParams.pageNumber)+1},e.prevPage=function(){return Number(e.routeParams.pageNumber)-1}}}}e.$inject=["$log","$routeParams","paginationService","$timeout"],angular.module("shared").directive("pagination",e)}(),function(){"use strict";function e(e,t,a){var r,n=this;n.group=function(e,t){var a="",n=Math.ceil(e.length/t);r=e;for(var i=0;i<n;i+=1)a+="[]"+(n-1!==i?",":"");for(var o=JSON.parse("["+a+"]"),c=0;c<o.length;c+=1)o[c]=e.slice(c*t,c*t+t);return o}}e.$inject=["$http","$log","$routeParams"],angular.module("shared").service("paginationService",e)}(),function(){"use strict";function e(e,t){this.forms=function(a,r){var n=e.open({ariaLabelledBy:"modal-title",ariaDescribedBy:"modal-body",templateUrl:"parts/popups/form.html",controller:["$uibModalInstance","items",function(e,t){var a=this,r={};a.title=t.title,a.fields=t.fields,a.additionalButtons=t.additionalButtons,a.validationCustom=function(e){var t=!0;r.filled=!0;for(var n=0;n<a.fields.length;n+=1){var i=a.fields[n];r[i.name]=i.text}return r.confirm_password?r.password===r.confirm_password&&e.$valid&&(t=!1):t=!e.$valid,t},a.send=function(t){e.close(t)},a.cancel=function(){e.dismiss("cancel")}}],controllerAs:"$ctrl",size:"md",resolve:{items:function(){return a}}});n.result.then(function(e){r(e)},function(){t.info("Modal dismissed at: "+new Date)})},this.messages=function(t,a){e.open({ariaLabelledBy:"modal-title",ariaDescribedBy:"modal-body",templateUrl:"parts/popups/messages.html",controller:["$uibModalInstance","options",function(e,a){var r=this;r.title=_.capitalize(t),r.data=a.data.message,r.classes=t,r.close=function(){e.dismiss("cancel")}}],controllerAs:"$ctrl",size:"md",resolve:{options:function(){return a}}})}}e.$inject=["$uibModal","$log"],angular.module("shared").service("popupsService",e)}(),function(){"use strict";function e(e){}e.$inject=["$log"],angular.module("users").service("usersService",e)}();
+(function () {
+    'use strict';
+
+  authRun.$inject = ["$http", "$log", "$localStorage", "mainAuthorizationService"];
+    angular.module('app', [
+        'ngRoute',
+        'ngSanitize',
+        'ui.select',
+        'ngStorage',
+        'facebook',
+        'google-signin',
+        'activation',
+        'header',
+        'home',
+        'front',
+        'page',
+        'shared'
+    ]).run(authRun);
+
+
+  function authRun($http, $log, $localStorage, mainAuthorizationService) {
+
+    // Dirty check for already loggined user.
+    if (mainAuthorizationService.checkAuthorization()) {
+      $http.defaults.headers.common.Authorization = $localStorage.Authorization;
+    }
+
+  }
+
+
+})();
+
+(function () {
+
+    'use strict';
+
+    mainRoute.$inject = ["$routeProvider", "FacebookProvider", "GoogleSigninProvider"];
+    function mainRoute($routeProvider, FacebookProvider, GoogleSigninProvider) {
+
+        // connect with facebook
+        FacebookProvider.init('184315939079210');
+
+        // connect with google
+        GoogleSigninProvider.init({
+            client_id: '607355219083-p7ven3qhii2kijmd1utei3h260ph8dk7.apps.googleusercontent.com',
+        });
+
+        $routeProvider
+            .otherwise({
+              redirectTo: '/1'
+                //template : "<h1>None</h1><p>Nothing has been selected</p>"
+            });
+    }
+
+    angular.
+        module('app')
+            .config(mainRoute);
+
+})();
+
+
+/*
+*
+* The Module of activation page after get message by email about account activation. In progress.
+*
+* */
+
+(function () {
+  'use strict';
+
+  angular.module('activation', [
+    'ngRoute'
+  ]);
+
+})();
+
+
+/*
+*
+* The Router of activation page after get message by email about account activation. In progress.
+*
+* */
+
+(function () {
+
+  'use strict';
+
+  activationUserRouter.$inject = ["$routeProvider"];
+  function activationUserRouter($routeProvider) {
+    $routeProvider
+      .when("/account_activation", {
+        templateUrl : "parts/activation-user/activation.user.html",
+        controller: "activationUserController",
+        controllerAs: '$ctrl'
+      });
+  }
+
+  angular.module('activation')
+    .config(activationUserRouter);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('front', [
+        'ngRoute'
+    ]);
+
+})();
+
+(function () {
+
+    'use strict';
+
+    frontRoute.$inject = ["$routeProvider"];
+    function frontRoute($routeProvider) {
+        $routeProvider
+            .when("/resume/:id", {
+                templateUrl : "parts/front/front.html",
+                controller: "frontController",
+                controllerAs: '$ctrl'
+            });
+    }
+
+    angular.module('front')
+        .config(frontRoute);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('header', []);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('home', [
+        'ngRoute'
+    ]);
+
+})();
+
+(function () {
+
+    'use strict';
+
+    homeRoute.$inject = ["$routeProvider"];
+    function homeRoute($routeProvider) {
+        $routeProvider
+            .when("/:pageNumber", {
+                templateUrl : "parts/home/home.html",
+                controller: "homeController",
+                controllerAs: '$ctrl'
+            });
+    }
+
+    angular.module('home')
+        .config(homeRoute);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('page', [
+        'ngRoute'
+    ]);
+
+})();
+
+(function () {
+
+    'use strict';
+
+    pageRoute.$inject = ["$routeProvider"];
+    function pageRoute($routeProvider) {
+        $routeProvider
+            .when("/page/:id/:pageName/:pageNumber", {
+                templateUrl : "parts/page/page.html",
+                controller: "pageController",
+                controllerAs: '$ctrl'
+            });
+    }
+
+    angular.module('page')
+        .config(pageRoute);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('shared', [
+        'ngRoute',
+        'ui.bootstrap'
+    ]);
+
+})();
+
+(function () {
+    'use strict';
+
+    angular.module('users', []);
+
+})();
+
+/*
+*
+* The Controller of activation page after get message by email about account activation. In progress.
+*
+* */
+
+(function () {
+  'use strict';
+
+  activationUserController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "$localStorage", "mainAuthorizationService", "headersService"];
+  function activationUserController($scope, $log, $routeParams, mainHttpService, $localStorage, mainAuthorizationService, headersService) {
+    var $ctrl = this;
+
+    //$ctrl.routeParams = $routeParams;
+
+    if ($localStorage.temporaryDataUser) {
+      var filledUser = {
+        name: $localStorage.temporaryDataUser.name,
+        email: $localStorage.temporaryDataUser.email,
+        password: $localStorage.temporaryDataUser.password,
+        uuid: $localStorage.temporaryDataUser.uuid,
+        hash: $localStorage.temporaryDataUser.hash
+      };
+
+      var filledLogin = {
+        email: $localStorage.temporaryDataUser.email,
+        password: $localStorage.temporaryDataUser.password,
+        rememberMe: true
+      };
+
+
+      mainHttpService.accountActivationUser('activation', filledUser, function (response) {
+        $localStorage.temporaryDataUser = false;
+        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+          mainHttpService.add('headers', headersService.defaultHeader(getUser().name, getUser().email), function (responseHeaders) {
+            $log.info('$localStorage', $localStorage);
+            $ctrl.message = 'Your account successfully activated!!!';
+          });
+        });
+      });
+    }
+
+    function getUser() {
+      return mainAuthorizationService.getUser();
+    }
+
+  }
+
+  angular.module('activation')
+    .controller('activationUserController', activationUserController);
+
+})();
+
+
+
+(function () {
+    'use strict';
+
+    frontController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "frontService", "popupsService", "mainAuthorizationService", "mainOtherService"];
+    function frontController($scope, $routeParams, $log, mainHttpService, frontService, popupsService, mainAuthorizationService, mainOtherService) {
+        var $ctrl = this;
+
+        $ctrl.routeParams = $routeParams;
+
+        mainHttpService.getById('headers', $ctrl.routeParams.id, function (response) {
+            $ctrl.header = response[0];
+        });
+
+        $ctrl.Authorization = function() {
+          return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+
+        $ctrl.loaderCheck = function () {
+          return mainOtherService.loader.activateLoader;
+        };
+
+        $ctrl.update = function() {
+          popupsService.forms({
+              title: 'Update',
+              fields: [
+                {
+                    type: 'text',
+                    placeholder: 'position',
+                    name: 'position',
+                    text: $ctrl.header.position,
+                    required: true
+                },
+                {
+                    type: 'text',
+                    placeholder: 'age',
+                    name: 'age',
+                    text: $ctrl.header.age,
+                    required: true
+                },
+                {
+                  type: 'multiple-selection',
+                  placeholder: 'Select skill...',
+                  name: 'multiple_selection',
+                  text: $ctrl.header.skills,
+                  availableSkills: [
+                    'JavaScript','Css','Html5', 'Node.js', 'Angular', 'Es6', 'TypeScript', 'MongoDB', 'Hapi.js'
+                  ],
+                  required: true
+                }
+              ]
+          }, function (data) {
+            var newData = frontService.filledData(data);
+            newData.name = $ctrl.getUser().name;
+            newData._id = $ctrl.header._id;
+            newData.creator_email = $ctrl.header.creator_email;
+            mainHttpService.update('headers', newData, function(response) {
+              $ctrl.header = response;
+            });
+          });
+        };
+
+    }
+
+    angular.module('front')
+        .controller('frontController', frontController);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    frontService.$inject = ["$log"];
+    function frontService($log) {
+      var _this = this;
+      
+      _this.filledData = function (data) {
+        var getProp = function(prop) {
+          return _.find(data, {name: prop});
+        };
+
+        return {
+          position: getProp('position').text,
+          age: getProp('age').text,
+          skills: getProp('multiple_selection').text
+        };
+      };
+
+    }
+
+    angular
+        .module('front')
+        .service('frontService', frontService);
+
+})();
+
+
+
+
+(function () {
+    'use strict';
+
+    headerTop.$inject = ["$log", "$uibModal", "$routeParams", "$localStorage", "popupsService", "mainHttpService", "mainAuthorizationService", "headersService"];
+    function headerTop($log, $uibModal, $routeParams, $localStorage, popupsService, mainHttpService, mainAuthorizationService, headersService) {
+        return {
+            restrict: 'EA',
+            templateUrl: window.ORIGIN_PATH + 'parts/header/header.html',
+            link: function (scope, element, attrs) {
+
+                var getProp = function(data, prop) {
+                  return _.find(data, {name: prop});
+                };
+
+              scope.originPath = function () {
+                return window.ORIGIN_PATH;
+              };
+
+              function connectWithFacebookGoogle(userResponse, ctrlPopup) {
+                // check if header is existing
+                mainHttpService.getByEmail('headers', userResponse.email, function(responseHeaders) {
+                  userResponse.rememberMe = true;
+                  mainHttpService.login('users/login', userResponse, function (responseLogin) {
+                    // close Popup
+                    ctrlPopup.cancel();
+                    if (responseHeaders.length <= 0) {
+                      mainHttpService.add('headers', headersService.defaultHeader(scope.getUser().name, scope.getUser().email), function (header) {
+                        scope.openTopMenu = false;
+                        window.location.hash = 'resume/' + header._id;
+                      });
+                    } else {
+                      scope.openTopMenu = false;
+                      window.location.hash = 'resume/' + responseHeaders[0]._id;
+                    }
+                  });
+                });
+              }
+
+                function facebookLogin(ctrlPopup) {
+                  mainAuthorizationService.authFacebook(function (userResponse) {
+                    connectWithFacebookGoogle(userResponse, ctrlPopup);
+                  });
+                }
+
+                function googleLogin(ctrlPopup) {
+                  mainAuthorizationService.authGoogle(function (userResponse) {
+                    connectWithFacebookGoogle({
+                      name: userResponse.w3.ig,
+                      email: userResponse.w3.U3
+                    }, ctrlPopup);
+                  });
+                }
+
+                scope.logout = function () {
+                    mainHttpService.logout();
+                };
+
+                scope.getUser = function () {
+                  return mainAuthorizationService.getUser();
+                };
+
+                scope.showTopMenu = function () {
+                    if (!scope.openTopMenu) {
+                        scope.openTopMenu = true;
+                    } else {
+                        scope.openTopMenu = false;
+                    }
+                };
+
+                scope.authorization = function() {
+                  return mainAuthorizationService.checkAuthorization();
+                };
+
+                scope.open = function () {
+
+                    popupsService.forms({
+                        title: 'Log In',
+                        fields: [
+                            {
+                                type: 'email',
+                                placeholder: 'email',
+                                text: '',
+                                name: 'email',
+                                required: true
+                            },
+                            {
+                                type: 'password',
+                                placeholder: 'password',
+                                text: '',
+                                name: 'password',
+                                required: true
+                            },
+                            {
+                                type: 'checkbox',
+                                placeholder: 'Remember me',
+                                name: 'rememberMe',
+                                checked: false
+                            }
+                        ],
+                        additionalButtons: [
+                          {
+                            text: 'Facebook',
+                            handler: facebookLogin
+                          },
+                          {
+                            text: 'Google',
+                            handler: googleLogin
+                          }
+                        ]
+                    }, function (data) {
+
+                        var filledData = {
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text,
+                          rememberMe: getProp(data, 'rememberMe').checked
+                        };
+
+                        mainHttpService.login('users/login', filledData, function (response) {
+                            scope.openTopMenu = false;
+                        });
+
+                    });
+                };
+
+                scope.registration = function () {
+
+                    popupsService.forms({
+                        title: 'Registration',
+                        fields: [
+                            {
+                                type: 'text',
+                                placeholder: 'name',
+                                text: '',
+                                name: 'name',
+                                required: true
+                            },
+                            {
+                                type: 'email',
+                                placeholder: 'email',
+                                text: '',
+                                name: 'email',
+                                required: true
+                            },
+                            {
+                                type: 'password',
+                                placeholder: 'password',
+                                text: '',
+                                name: 'password',
+                                required: true
+                            },
+                            {
+                                type: 'password',
+                                placeholder: 'confirm password',
+                                text: '',
+                                name: 'confirm_password',
+                                required: true
+                            }
+                        ]
+                    }, function (data) {
+
+                        var filledUser = {
+                          name: getProp(data, 'name').text,
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text
+                        };
+
+                        var filledLogin = {
+                          email: getProp(data, 'email').text,
+                          password: getProp(data, 'password').text,
+                          rememberMe: true
+                        };
+
+                      mainHttpService.add('users', filledUser, function (userResponse) {
+                        mainHttpService.login('users/login', filledLogin, function (responseLogin) {
+                          mainHttpService.add('headers', headersService.defaultHeader(filledUser.name, filledUser.email), function (header) {
+                            scope.openTopMenu = false;
+                            window.location.hash = 'resume/' + header._id;
+                          });
+                        });
+                      });
+
+                      // --->> Registration by email. In progress!!! <<---
+                      //   var filledUser = {
+                      //     name: getProp(data, 'name').text,
+                      //     email: getProp(data, 'email').text,
+                      //     password: getProp(data, 'password').text,
+                      //     url: scope.originPath()
+                      //   };
+                      //
+                      // mainHttpService.authorization('authorization', filledUser, function (userResponse) {
+                      //   popupsService.messages('Message', {data: {message: 'You need to go to service email and account activate!!!'}});
+                      // });
+
+                    });
+                };
+
+
+            }
+        };
+    }
+
+    angular.module('header')
+        .directive('headerTop', headerTop);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    headersService.$inject = ["$http", "$log"];
+    function headersService($http, $log) {
+        var _this = this;
+
+      _this.defaultHeader = function (name, email) {
+          return {
+            name: name,
+            position: '<Your position>',
+            age: '<Your age>',
+            skills: '<Need your real skills (for example: css, html etc.)>',
+            creator_email: email
+          };
+      };
+        
+    }
+
+    angular
+        .module('header')
+        .service('headersService', headersService);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    homeController.$inject = ["$scope", "$log", "$routeParams", "mainHttpService", "popupsService", "homeService", "mainAuthorizationService", "mainOtherService"];
+    function homeController($scope, $log, $routeParams, mainHttpService, popupsService, homeService, mainAuthorizationService, mainOtherService) {
+        var $ctrl = this;
+
+        // This is necessary for pagination menu because 'hash' can be different
+        $scope.getHash = '#';
+
+      $ctrl.items = [];
+      $ctrl.showMessage = false;
+
+        // for the correct "reverse"
+        mainHttpService.cacheData = {};
+
+        $ctrl.availableityItems = function () {
+          return $ctrl.items && $ctrl.items.length ? true : false;
+        };
+
+        mainHttpService.get('headers', function (response) {
+            $ctrl.items = _.reverse(response);
+            $scope.prevItems = $ctrl.items;
+
+            if (!$ctrl.availableityItems()) {
+              $ctrl.showMessage = true;
+            }
+        });
+
+        $ctrl.loaderCheck = function () {
+          return mainOtherService.loader.activateLoader;
+        };
+
+        $ctrl.Authorization = function() {
+            return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.findMe = function() {
+          $ctrl.items = [_.find(mainHttpService.cacheData.headers, { 'creator_email': $ctrl.getUser().email })];
+          $scope.prevItems = $ctrl.items;
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+
+      // Remove User Completely
+      $ctrl.removeCompletely = function (header) {
+        var dataAvailability = [];
+        var message = function (value) {
+          if (value) {
+            popupsService.messages('Message', {
+              data: {
+                message: 'User deleted!!!'
+              }
+            });
+          } else {
+            popupsService.messages('Message', {
+              data: {
+                message: 'You can\'t delete a user because the following data is available: "' + dataAvailability.join(', ') +
+                '". At first you should be remove the available data then to retry delete user.'
+              }
+            });
+          }
+        };
+        mainHttpService.get('companies', function (companiesResponse) {
+          if (_.filter(companiesResponse, {creator_email: header.creator_email}).length) {
+            dataAvailability.push('companies');
+          }
+          mainHttpService.get('projects', function (projectsResponse) {
+
+            if (_.filter(projectsResponse, {creator_email: header.creator_email}).length) {
+              dataAvailability.push('projects');
+            }
+
+            mainHttpService.get('scripts', function (scriptsResponse) {
+              if (_.filter(scriptsResponse, {creator_email: header.creator_email}).length) {
+                dataAvailability.push('scripts');
+              }
+
+              mainHttpService.get('abouts', function (aboutsResponse) {
+                if (_.filter(aboutsResponse, {creator_email: header.creator_email}).length) {
+                  dataAvailability.push('abouts');
+                }
+
+                if (dataAvailability.length) {
+                  message();
+                } else {
+                  mainHttpService.deleteById('headers', header._id, function() {
+                    mainHttpService.getByEmail('users', header.creator_email, function (userFound) {
+                      if (userFound.length) {
+                        mainHttpService.deleteById('users', userFound[0]._id, function() {
+                          message(true);
+                        });
+                      } else {
+                        message(true);
+                      }
+                    });
+
+                  });
+                }
+
+              });
+            });
+          });
+        });
+
+      };
+
+       
+    }
+
+    angular.module('home')
+        .controller('homeController', homeController);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    homeService.$inject = ["$http", "$log", "$routeParams"];
+    function homeService ($http, $log, $routeParams) {
+      var _this = this;
+    }
+
+    angular
+        .module('home')
+        .service('homeService', homeService);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    pageController.$inject = ["$scope", "$routeParams", "$log", "mainHttpService", "popupsService", "pageService", "paginationService", "mainAuthorizationService", "mainOtherService"];
+    function pageController($scope, $routeParams, $log, mainHttpService, popupsService, pageService, paginationService, mainAuthorizationService, mainOtherService) {
+        var $ctrl = this;
+
+        $ctrl.routeParams = $routeParams;
+
+        $ctrl.showMessage = false;
+
+        $ctrl.items = [];
+
+        // This need for pagination menu because 'hash' can be different
+        $scope.getHash = '#/page/' + $ctrl.routeParams.id + '/' + $ctrl.routeParams.pageName;
+
+        $ctrl.availableityItems = function () {
+          return $ctrl.items && $ctrl.items.length ? true : false;
+        };
+
+        mainHttpService.getById('headers', $ctrl.routeParams.id, function(responseHeader) {
+          pageService.creatorEmail = responseHeader[0].creator_email;
+          mainHttpService.getByEmail($ctrl.routeParams.pageName, responseHeader[0].creator_email, function(responsePage) {
+              $ctrl.items = _.reverse(responsePage);
+              $scope.prevItems = $ctrl.items;
+
+              if (!$ctrl.availableityItems()) {
+                $ctrl.showMessage = true;
+              }
+          });
+        });
+
+        $ctrl.loaderCheck = function () {
+          return mainOtherService.loader.activateLoader;
+        };
+
+        $ctrl.getCreatorEmailByHeader = function() {
+          return pageService.creatorEmail;
+        };
+
+        $ctrl.Authorization = function() {
+          return mainAuthorizationService.checkAuthorization();
+        };
+
+        $ctrl.getUser = function() {
+          return mainAuthorizationService.getUser();
+        };
+
+        $ctrl.add = function() {
+          if (!$ctrl.items) {
+            $ctrl.items = [];
+          }
+
+          popupsService.forms({
+              title: $ctrl.routeParams.pageName !== 'abouts' ? 'Add' : 'Create',
+              fields: pageService.getFields()
+          }, function (data) {
+              mainHttpService.add($ctrl.routeParams.pageName, pageService.filledData(data), function(response) {
+                  $ctrl.items.unshift(response);
+                  $scope.prevItems.unshift(response);
+                  $ctrl.showMessage = false;
+              });
+          });
+        };
+
+        $ctrl.update = function(currentData, index) {
+          popupsService.forms({
+              title: 'Update',
+              fields: pageService.getFields(currentData)
+          }, function (data) {
+            var newData = pageService.filledData(data);
+            newData._id = currentData._id;
+            mainHttpService.update($ctrl.routeParams.pageName, newData, function(response) {
+                $ctrl.items[index] = response;
+            });
+          });
+        };
+
+        $ctrl.delete = function(id, index) {
+          mainHttpService.deleteById($ctrl.routeParams.pageName, id, function(response) {
+              $ctrl.items.splice(index, 1);
+              $scope.prevItems.splice(index, 1);
+              if (!$ctrl.availableityItems()) {
+                $ctrl.showMessage = true;
+              }
+          });
+        };
+
+        $ctrl.changeTitle = function () {
+          return {
+            allSymbols: function() {
+              return _.capitalize($ctrl.routeParams.pageName);
+            },
+            cutLastSymbol: function() {
+              return this.allSymbols().substr(0, this.allSymbols().length - 1);
+            }
+          };
+        };
+
+        $ctrl.loadScript = function (item) {
+          pageService.loadScript({
+            title: 'Load Script',
+            data: item
+          });
+        };
+        
+
+    }
+
+    angular.module('page')
+        .controller('pageController', pageController);
+
+})();
+
+
+
+(function() {
+  
+  'use strict';
+
+  angular.module('page').directive('bindHtmlWithJs', ['$sce', '$parse', function ($sce, $parse)
+    {
+
+        /**
+         * It removes script tags from html and inserts it into DOM.
+         *
+         * Testing:
+         * html += '<script>alert(1234)</script><script type="text/javascript">alert(12345)</script><script type="asdf">alert(1234)</script><script src="/js/alert.js">alert(1234)</script><span style="color: red;">1234</span>';
+         * or
+         * html += '<script src="/js/alert.js"></script><script type="text/javascript">console.log(window.qwerqwerqewr1234)</script><span style="color: red;">1234</span>';
+         *
+         * @param html {String}
+         * @returns {String}
+         */
+        function handleScripts(html)
+        {
+          // html must start with tag - it's angularjs' jqLite bug/feature
+          html = '<i></i>' + html;
+
+          var originElements = angular.element(html),
+            elements = angular.element('<div></div>');
+
+          if (originElements.length)
+          {
+            // start from 1 for removing first tag we just added
+            for (var i = 1, l = originElements.length; i < l; i ++)
+            {
+              var $el = originElements.eq(i),
+                el = $el[0];
+              if (el.nodeName == 'SCRIPT' && ((! el.type) || el.type == 'text/javascript')) {
+                evalScript($el[0]);
+              }
+              else {
+                elements.append($el);
+              }
+            }
+          }
+  //        elements = elements.contents();
+          html = elements.html();
+
+          return html;
+        }
+
+        /**
+         * It's taken from AngularJS' jsonpReq function.
+         * It's not ie < 9 compatible.
+         * @param {DOMElement} element
+         */
+        function evalScript(element)
+        {
+          var script = document.createElement('script'),
+            body = document.body,
+            doneWrapper = function() {
+              script.onload = script.onerror = null;
+              body.removeChild(script);
+            };
+
+          script.type = 'text/javascript';
+          if (element.src)
+          {
+            script.src = element.src;
+            script.async = element.async;
+            script.onload = script.onerror = function () {
+              doneWrapper();
+            };
+          }
+          else
+          {
+            // doesn't work on ie...
+            try {
+              script.appendChild(document.createTextNode(element.innerText));
+            }
+            // IE has funky script nodes
+            catch (e) {
+              script.text = element.innerText;
+            }
+
+            setTimeout(function () {doneWrapper();}, 10);
+          }
+          body.appendChild(script);
+        }
+
+      return function ($scope, element, attr)
+      {
+        element.addClass('ng-binding').data('$binding', attr.bindHtmlWithJs);
+
+        var parsed = $parse(attr.bindHtmlWithJs);
+
+        function getStringValue()
+        {
+          return (parsed($scope) || '').toString();
+        }
+
+        $scope.$watch(getStringValue, function bindHtmlWithJsWatchAction(value)
+        {
+          var html = value ? $sce.getTrustedHtml(parsed($scope)) : '';
+          if (html) {
+            html = handleScripts(html);
+          }
+          element.html(html || '');
+        });
+      };
+    }]);
+
+})();
+
+
+(function() {
+  
+  'use strict';
+
+  angular.module('page')
+    .filter('htmlCode', ["$sce", function($sce) {
+      return function(text) {
+        return $sce.trustAsHtml(text);
+      };
+  }]);
+  
+})();
+
+(function () {
+    'use strict';
+
+    pageService.$inject = ["$http", "$log", "$routeParams", "$uibModal"];
+    function pageService ($http, $log, $routeParams, $uibModal) {
+        var _this = this;
+
+        _this.creatorEmail = '';
+
+        _this.filledData = function (data) {
+
+          var getProp = function(prop) {
+            return _.find(data, {placeholder: prop});
+          };
+
+          var projectsAndCompanies = function () {
+            return {
+              title: getProp('title').text,
+              link: getProp('link').text,
+              description: getProp('description').text,
+              creator_email: _this.creatorEmail
+            };
+          };
+          switch($routeParams.pageName) {
+            case 'abouts':
+              return {
+                description: getProp('description').text,
+                creator_email: _this.creatorEmail
+              };
+            case 'scripts':
+              return {
+                title: getProp('title').text,
+                link: getProp('scripts').text,
+                description: getProp('description').text,
+                css: getProp('css').text,
+                html: getProp('html').text,
+                creator_email: _this.creatorEmail
+              };
+            case 'projects':
+              return projectsAndCompanies();
+            case 'companies':
+              return projectsAndCompanies();
+            default: 
+              return {};
+
+          }
+        };
+
+        _this.getFields = function (currentData) {
+          var checkData = function(prop) {
+            return currentData ? currentData[prop] : '';
+          };
+          var projectsAndCompanies = [
+            {
+                type: 'text',
+                placeholder: 'title',
+                text: checkData('title'),
+                required: true
+            },
+            {
+                type: 'text',
+                placeholder: 'link',
+                text: checkData('link'),
+                required: true
+            },
+            {
+                type: 'textarea',
+                placeholder: 'description',
+                text: checkData('description'),
+                required: true
+            }
+          ];
+          switch($routeParams.pageName) {
+            case 'scripts':
+              return [
+                  {
+                      type: 'text',
+                      placeholder: 'title',
+                      text: checkData('title'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'description',
+                      text: checkData('description'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'css',
+                      text: checkData('css'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'scripts',
+                      text: checkData('link'),
+                      required: true
+                  },
+                  {
+                      type: 'textarea',
+                      placeholder: 'html',
+                      text: checkData('html'),
+                      required: true
+                  }
+              ];
+            case 'abouts':
+              return [
+                {
+                    type: 'textarea',
+                    placeholder: 'description',
+                    text: checkData('description'),
+                    required: true
+                }
+              ];
+            case 'projects':
+              return projectsAndCompanies;
+            case 'companies':
+              return projectsAndCompanies;
+            default:
+              return [];
+          }
+        };
+
+
+        _this.loadScript = function (data) {
+          var modal = $uibModal.open({
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'parts/load-script/load.script.html',
+            controller: ["$uibModalInstance", "items", function($uibModalInstance, items) {
+                var $ctrl = this;
+                $ctrl.title = items.title;
+                $ctrl.script = {
+                  css: items.data.css,
+                  html: items.data.html,
+                  js: items.data.link
+                };
+
+                $ctrl.close = function () {
+                    $uibModalInstance.dismiss('close');
+                };
+            }],
+            controllerAs: '$ctrl',
+            size: 'md',
+            resolve: {
+                items: function () {
+                    return data;
+                }
+            }
+          });
+        };
+
+
+    }
+
+    angular
+        .module('page')
+        .service('pageService', pageService);
+
+})();
+
+(function () {
+    'use strict';
+
+    mainAuthorizationService.$inject = ["$http", "$log", "$localStorage", "Facebook", "GoogleSignin"];
+    function mainAuthorizationService($http, $log, $localStorage, Facebook, GoogleSignin) {
+      var _this = this;
+
+      _this.firstOnlyLocalStorage = {
+        Authorization: undefined,
+        user: undefined
+      };
+
+      _this.checkRememberMe = function(rememberMe) {
+        $localStorage.checkRememberMe = rememberMe;
+      };
+      _this.checkAuthorization = function() {
+        var checkRememberMe = (!$localStorage.checkRememberMe);
+        var authFirstOnly = _this.firstOnlyLocalStorage.Authorization;
+        var auth = $localStorage.Authorization;
+        var checkLocalStorage = checkRememberMe ? authFirstOnly : auth;
+        return checkLocalStorage ? true : false;
+      };
+
+      _this.addAuthHeaderForAPI = function(token) {
+        $localStorage.Authorization = 'Bearer ' + token;
+        _this.firstOnlyLocalStorage.Authorization = 'Bearer ' + token;
+        $http.defaults.headers.common.Authorization = 'Bearer ' + token;
+        $http.defaults.headers.common['Content-Type'] = 'application/json';
+      };
+
+      _this.clearAuthHeaderForAPI = function() {
+          $localStorage.Authorization = undefined;
+          _this.firstOnlyLocalStorage.Authorization = undefined;
+          delete $http.defaults.headers.common.Authorization;
+      };
+
+      _this.setToken = function(token) {
+        if (!token) {
+          return;
+        }
+        $localStorage.Authorization = token;
+        _this.firstOnlyLocalStorage.Authorization = token;
+      };
+
+      _this.clearUserMyself = function() {
+        _this.firstOnlyLocalStorage.user = undefined;
+        $localStorage.user = undefined;
+      };
+
+      _this.getUser = function() {
+         return !$localStorage.checkRememberMe ? _this.firstOnlyLocalStorage.user : $localStorage.user;
+      };
+
+      _this.setUserMyself = function(user) {
+        delete user.password;
+        $localStorage.user = user;
+        _this.firstOnlyLocalStorage.user = user;
+      };
+
+      _this.authFacebook = function (cb) {
+        Facebook.login(function(loginResponse) {
+          if (loginResponse.status == 'connected') {
+            // For "email, name" fields access is allowed
+            Facebook.api('/me', { fields: 'email, name' }, cb);
+          } else {
+            $log.info('Facebook. User cancelled login or did not fully authorize.');
+          }
+        }, {scope: 'email'});
+      };
+
+
+      _this.authGoogle = function (cb) {
+        GoogleSignin.signIn().then(cb, function (err) {
+          $log.info('Google. User cancelled login or did not fully authorize.', err);
+        });
+      };
+
+    }
+
+    angular
+        .module('shared')
+        .service('mainAuthorizationService', mainAuthorizationService);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    mainHttpService.$inject = ["$http", "$log", "$localStorage", "popupsService", "mainAuthorizationService", "mainOtherService"];
+    function mainHttpService($http, $log, $localStorage, popupsService, mainAuthorizationService, mainOtherService) {
+      var _this = this;
+      var cacheDataFirstOnly = false;
+      _this.cacheData = {};
+
+      _this.get = function (nameRequest, successCallback) {
+        if (!_this.cacheData[nameRequest]) {
+          mainRequest('get', [mainUrl() + nameRequest], function (response) {
+            _this.cacheData[nameRequest] = response.data;
+            successCallback(response.data);
+          });       
+        } else {
+          successCallback(_this.cacheData[nameRequest]);
+        } 
+      };
+
+      _this.add = function (nameRequest, data, successCallback) {
+          mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
+            if (nameRequest !== 'users' && _this.cacheData[nameRequest]) {
+              _this.cacheData[nameRequest].push(response.data);
+            }
+            successCallback(response.data);
+          });     
+      };
+
+
+      // --->> Registration by email. In progress!!! <<---
+      _this.authorization = function (nameRequest, data, successCallback) {
+        $localStorage.temporaryDataUser = false;
+        mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
+          $localStorage.temporaryDataUser = response.data;
+          successCallback(response.data);
+        });
+      };
+
+      // --->> Activation by email. In progress!!! <<---
+      _this.accountActivationUser = function (nameRequest, data, successCallback) {
+        mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
+          successCallback(response.data);
+        });
+      };
+
+      _this.login = function (nameRequest, data, successCallback) { 
+
+          if (cacheDataFirstOnly) {
+            _this.cacheData = cacheDataFirstOnly;
+          }
+
+          mainAuthorizationService.checkRememberMe(data.rememberMe);
+          delete data.rememberMe;
+
+          mainRequest('post', [mainUrl() + nameRequest, data], function (response) {
+            mainAuthorizationService.setToken(response.data.token);
+            mainAuthorizationService.addAuthHeaderForAPI(response.data.token);
+            mainAuthorizationService.setUserMyself(response.data.user);
+            successCallback(response);
+          });     
+      };
+
+      _this.logout = function () {
+        cacheDataFirstOnly = _this.cacheData;
+        _this.cacheData = {};
+        mainAuthorizationService.clearUserMyself();
+        mainAuthorizationService.setToken();
+        mainAuthorizationService.clearAuthHeaderForAPI();
+      };
+
+      _this.update = function (nameRequest, data, successCallback) {
+        mainRequest('put', [mainUrl() + nameRequest, data], function (response) {
+          _this.cacheData[nameRequest][cacheIndex(nameRequest, { _id: response.data._id })] = response.data;
+          successCallback(response.data);
+        });  
+      };
+
+      _this.deleteById = function (nameRequest, id, successCallback) {
+        mainRequest('delete', [mainUrl() + nameRequest + '/' + id], function (response) {
+          _this.cacheData[nameRequest].splice(cacheIndex(nameRequest, { _id: id }), 1);
+          successCallback(response.data);
+        });  
+      };
+
+      _this.getById = function (nameRequest, id, successCallback) {
+        _this.get(nameRequest, function (response) {
+          successCallback(findByValue(id, '_id', response));
+        });
+      };
+
+      _this.getByEmail = function (nameRequest, email, successCallback) {
+        _this.get(nameRequest, function (response) {
+          successCallback(findByValue(email, (nameRequest === 'users' ? 'email' : 'creator_email'), response));
+        });        
+      };
+
+      function cacheIndex(name, data) {
+        return _.findIndex(_this.cacheData[name], data);
+      }     
+
+      function findByValue(value, prop, collection) {
+        return _.filter(collection, JSON.parse('{"' + prop + '":"' + value + '"}'));
+      }
+
+      function mainUrl () {
+        return window.API_URL + '/';
+      }
+
+      function mainRequest(typeRequest, options, successCallback) {
+        mainOtherService.loader.show();
+        $http[typeRequest].apply(this, options).then(function (response) {
+          mainOtherService.loader.hide();
+          successCallback(response);
+        }).catch(errorCallback);
+      }      
+
+      function errorCallback(error) {
+          mainOtherService.loader.hide();
+          if (error.data) {
+              popupsService.messages('error', error.data.message ? error : {
+                data: { message: 'status: ' + error.data.statusCode + ', message: ' + error.data.error }
+              });
+          } else {
+              popupsService.messages('error', {data: {message: 'status: ' + error.status}});
+          }
+      }
+    }
+
+    angular
+        .module('shared')
+        .service('mainHttpService', mainHttpService);
+
+})();
+
+
+(function () {
+  'use strict';
+
+  mainOtherService.$inject = ["$http", "$log"];
+  function mainOtherService($http, $log) {
+    var _this = this;
+
+    _this.loader = {
+      activateLoader: false,
+      show: function () {
+        _this.loader.activateLoader = true;
+      },
+      hide: function () {
+        _this.loader.activateLoader = false;
+      }
+    };
+
+  }
+
+  angular
+    .module('shared')
+    .service('mainOtherService', mainOtherService);
+
+})();
+
+
+
+(function () {
+    'use strict';
+
+    pagination.$inject = ["$log", "$routeParams", "paginationService", "$timeout"];
+    function pagination($log, $routeParams, paginationService, $timeout) {
+        return {
+            restrict: 'EA',
+            templateUrl: window.ORIGIN_PATH + 'parts/pagination/pagination.html',
+            link: function (scope, element, attrs) {
+              
+                scope.routeParams = $routeParams;
+                var pageNumber = Number(scope.routeParams.pageNumber);
+
+                scope.getHash;
+
+                scope.$watch('prevItems',function (newVal) {
+
+                    if (newVal) {
+                        var paginationGroup = paginationService.group(newVal, 5);
+                        scope.pagination = paginationGroup;
+                        scope.$ctrl.items = paginationGroup[Number(scope.routeParams.pageNumber) - 1];
+                    }
+
+                }, true);
+
+
+
+            scope.showNumbering = function (index) {
+                var a = (pageNumber === (index+3));
+                var b = (pageNumber === (index+2));
+                var c = (pageNumber === (index + 1));
+                var d = (pageNumber === index);
+                var e = (pageNumber === (index-1));
+                return a || b || c || d || e;
+            };
+
+            scope.showDots = function (index) {
+                    return pageNumber === (index+4) || pageNumber === (index-2);
+
+            };
+
+              scope.nextPage = function () {
+                return Number(scope.routeParams.pageNumber) + 1;
+              };
+
+              scope.prevPage = function () {
+                return Number(scope.routeParams.pageNumber) - 1;
+              };
+            }
+        };
+    }
+
+    angular.module('shared')
+        .directive('pagination', pagination);
+
+})();
+
+
+(function () {
+    'use strict';
+
+    pagination.$inject = ["$http", "$log", "$routeParams"];
+    function pagination ($http, $log, $routeParams) {
+      var _this = this;
+
+      var cache;
+
+      _this.group = function(array, count) {
+        var stringArray = '';
+        var ceil = Math.ceil(array.length/count);
+          cache = array;
+        for (var i = 0; i < ceil; i = i + 1) {
+          stringArray = stringArray + ('[]' + ((ceil-1) !== i ? ',' : ''));
+        }
+        var groups = JSON.parse('[' + stringArray + ']');
+        for (var j = 0; j < groups.length; j = j + 1) {
+          groups[j] = array.slice((j * count), ((j * count) + count));
+        }
+        return groups;
+      };
+
+    }
+
+    angular
+        .module('shared')
+        .service('paginationService', pagination);
+
+})();
+
+(function () {
+    'use strict';
+
+    popupsService.$inject = ["$uibModal", "$log"];
+    function popupsService($uibModal, $log) {
+
+        this.forms = function (data, callback) {
+            var modal = $uibModal.open({
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'parts/popups/form.html',
+                controller: ["$uibModalInstance", "items", function($uibModalInstance, items) {
+                    var $ctrl = this;
+                    var fields = {};
+                    $ctrl.title = items.title;
+                    $ctrl.fields = items.fields;
+                    $ctrl.additionalButtons = items.additionalButtons;
+
+                    $ctrl.validationCustom = function(form) {
+                      var result = true;
+                      fields.filled = true;
+                      for (var i = 0; i <  $ctrl.fields.length; i = i + 1) {
+                        var field = $ctrl.fields[i];
+                        fields[field.name] = field.text;
+                      }
+                      if (fields.confirm_password) {
+                        if (fields.password === fields.confirm_password && form.$valid) {
+                          result = false;
+                        }
+                      } else {
+                        result = !form.$valid;
+                      }
+                      return result;
+                    };                    
+
+                    $ctrl.send = function (fieldsFilled) {
+                        $uibModalInstance.close(fieldsFilled);
+                    };
+
+                    $ctrl.cancel = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                }],
+                controllerAs: '$ctrl',
+                size: 'md',
+                resolve: {
+                    items: function () {
+                        return data;
+                    }
+                }
+            });
+
+            modal.result.then(function (selectedItem) {
+                callback(selectedItem);
+            }, function () {
+                $log.info('Modal dismissed at: ' + new Date());
+            });
+        };
+
+        this.messages = function (type, data) {
+          var modal = $uibModal.open({
+              ariaLabelledBy: 'modal-title',
+              ariaDescribedBy: 'modal-body',
+              templateUrl: 'parts/popups/messages.html',
+              controller: ["$uibModalInstance", "options", function($uibModalInstance, options) {
+                  var $ctrl = this;
+                  
+                  $ctrl.title = _.capitalize(type);
+                  $ctrl.data = options.data.message;
+                  $ctrl.classes = type;
+
+                  $ctrl.close = function () {
+                      $uibModalInstance.dismiss('cancel');
+                  };
+              }],
+              controllerAs: '$ctrl',
+              size: 'md',
+              resolve: {
+                  options: function () {
+                      return data;
+                  }
+              }
+          });
+        };
+
+    }
+
+    angular
+        .module('shared')
+        .service('popupsService', popupsService);
+
+})();
+
+(function () {
+    'use strict';
+
+    usersService.$inject = ["$log"];
+    function usersService($log) {
+
+    }
+
+    angular
+        .module('users')
+        .service('usersService', usersService);
+
+})();
